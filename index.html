@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Deskly — A Room for What's Next | Meeting Rooms in Chennai</title>
+<meta name="description" content="Deskly India — premium meeting rooms in Royapettah, Chennai. Executive (12 seats) and Large Conference (16 seats) spaces from ₹900/hr. Scroll into the room." />
+<meta property="og:title" content="Deskly — Ideas deserve a better space" />
+<meta property="og:description" content="A room you can scroll into. Premium meeting & conference rooms in Chennai." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./styles.css" />
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+
+<!-- Preloader -->
+<div id="loader" aria-hidden="true">
+  <div class="ld-brand">DESKLY<span>.</span></div>
+  <div class="ld-count" id="ldCount">00</div>
+  <div class="ld-bar"><span id="ldBar"></span></div>
+  <p class="ld-sub">Preparing the room…</p>
+</div>
+
+<!-- Progress hairline -->
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+<!-- Minimal nav -->
+<header class="nav" id="nav">
+  <a class="brand" href="#top" data-scroll-to="0">DESKLY<span class="brand-dot">.</span></a>
+  <nav class="nav-links" aria-label="Primary">
+    <a href="#film" data-scroll-to="0.2">Spaces</a>
+    <a href="#film" data-scroll-to="0.57">Experience</a>
+    <a href="#film" data-scroll-to="0.9">Pricing</a>
+  </nav>
+  <div class="nav-right">
+    <a href="#book" class="book-pill" data-scroll-to="1">Book a room</a>
+  </div>
+</header>
+
+<!-- 3D canvas -->
+<canvas id="stage" aria-hidden="true"></canvas>
+
+<!-- Cinematic grade overlays -->
+<div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+<div class="letterbox top" aria-hidden="true"></div>
+<div class="letterbox bottom" aria-hidden="true"></div>
+<div class="light-leak" id="lightLeak" aria-hidden="true"></div>
+
+<!-- Chapter rail -->
+<nav class="chapters" id="chapters" aria-label="Chapters">
+  <button data-goto="0"><i></i><span>Darkness</span></button>
+  <button data-goto="0.09"><i></i><span>Doorway</span></button>
+  <button data-goto="0.24"><i></i><span>Atelier</span></button>
+  <button data-goto="0.5"><i></i><span>The other side</span></button>
+  <button data-goto="0.64"><i></i><span>Big room</span></button>
+  <button data-goto="0.82"><i></i><span>Screen</span></button>
+  <button data-goto="1"><i></i><span>Book</span></button>
+</nav>
+
+<!-- Scroll hint -->
+<div class="scroll-hint" id="scrollHint" aria-hidden="true">
+  <span class="scroll-line"></span>
+  <span class="scroll-txt">Scroll to enter</span>
+</div>
+
+<!-- Frame counter -->
+<div class="frame-tag" aria-hidden="true"><span id="sceneName">SC.01 — Darkness</span><span id="timecode">00:00</span></div>
+
+<!-- The film: one continuous scroll track -->
+<main id="film">
+  <div class="track" id="track" aria-label="A continuous scroll-driven film through Deskly">
+
+    <div class="moment m-dark">
+      <p class="kicker">Royapettah · 9:04 AM</p>
+      <h1 class="whisper split"><span class="l">Big day.</span><span class="l"><em>Full head.</em></span></h1>
+      <p class="sub fade-line">A pitch. A decision. No room for noise.</p>
+    </div>
+
+    <div class="moment m-door">
+      <p class="kicker">The entrance</p>
+      <h2 class="title split"><span class="l">Leave the noise</span><span class="l">outside.</span></h2>
+      <p class="sub fade-line">Cross the threshold.</p>
+    </div>
+
+    <div class="moment m-brand">
+      <p class="kicker kicker-brass">Deskly</p>
+      <h2 class="serif-xl split"><span class="l">Ideas deserve</span><span class="l"><em>a better space.</em></span></h2>
+      <p class="sub fade-line">A room for what's next.</p>
+    </div>
+
+    <div class="moment m-think">
+      <p class="kicker">The room</p>
+      <h2 class="serif-lg split"><span class="l">A place <em>to think.</em></span></h2>
+      <p class="sub fade-line">Spread everything out. Nobody's watching the clock.</p>
+    </div>
+
+    <div class="moment m-meet">
+      <h2 class="serif-lg split"><span class="l">A place <em>to meet.</em></span></h2>
+      <p class="sub fade-line">The right chairs. The right light. The right people.</p>
+    </div>
+
+    <div class="moment m-happen">
+      <h2 class="serif-lg split"><span class="l">A place to make</span><span class="l"><em>things happen.</em></span></h2>
+      <p class="sub fade-line">The 12-seat Executive — this is usually where it turns.</p>
+    </div>
+
+    <div class="moment m-glass">
+      <p class="kicker">The perspective shift</p>
+      <h2 class="serif-md split"><span class="l">Every decision</span><span class="l">has <em>another side.</em></span></h2>
+      <p class="sub fade-line">Walk through the glass. See it from there.</p>
+    </div>
+
+    <div class="moment m-large">
+      <p class="kicker kicker-brass">Large Conference Room</p>
+      <h2 class="serif-xl split"><span class="l">More room for</span><span class="l"><em>the big conversations.</em></span></h2>
+      <div class="spec-row fade-line">
+        <span>16 seats</span><i></i><span>From ₹1,200 / hour</span><i></i><span>Royapettah</span>
+      </div>
+      <p class="sub fade-line">Sixteen chairs. One decision.</p>
+    </div>
+
+    <div class="moment m-details">
+      <p class="kicker">The details</p>
+      <div class="annotations fade-line">
+        <span class="anno">4K Display</span>
+        <span class="anno">Whiteboard</span>
+        <span class="anno">Video conferencing</span>
+        <span class="anno">Workshop-ready</span>
+      </div>
+      <p class="sub fade-line">The room handles everything else. You handle the decision.</p>
+    </div>
+
+    <!-- finale copy lives ON the display itself (see finTex) — no HTML overlap -->
+
+    <!-- Final moment = booking. Not a section — the end of the film. -->
+    <div class="moment m-book" id="book">
+      <div class="book-card" role="dialog" aria-label="Book a room">
+        <p class="kicker kicker-brass">Fin — Book a room</p>
+        <h2 class="serif-md split"><span class="l">Hold the room.</span><span class="l"><em>We'll hold the light.</em></span></h2>
+        <form id="bookForm">
+          <div class="f-row">
+            <label>Room
+              <select name="room" required>
+                <option value="Executive Meeting Room — 12 seats — ₹900/hr">Executive — 12 seats — ₹900/hr</option>
+                <option value="Large Conference Room — 16 seats — ₹1200/hr" selected>Large Conference — 16 seats — ₹1,200/hr</option>
+              </select>
+            </label>
+            <label>Date <input type="date" name="date" required /></label>
+          </div>
+          <div class="f-row">
+            <label>Time <input type="time" name="time" required /></label>
+            <label>Duration
+              <select name="dur"><option selected>2 hours</option><option>Half day — save 15%</option><option>Full day — save 25%</option></select>
+            </label>
+          </div>
+          <label>Email <input type="email" name="email" placeholder="you@company.com" required /></label>
+          <button type="submit" class="book-cta">Request to book →</button>
+          <p class="fine" id="bookFine">A real inquiry — no fake availability. We confirm within two working hours.</p>
+        </form>
+        <div class="book-alt">
+          <a href="mailto:info@deskly.in?subject=Room%20inquiry%20—%20Deskly%20Chennai">info@deskly.in</a>
+          <span>·</span><a href="tel:+919894550300">+91 98945 50300</a>
+        </div>
+        <p class="book-addr">B7 &amp; B8, Bhattad Towers, Indira Garden, Royapettah, Chennai 600014</p>
+      </div>
+      <a class="replay" href="#top" data-scroll-to="0">↺ &nbsp;Replay the film</a>
+    </div>
+
+  </div>
+</main>
+
+<noscript><p style="color:#f2ebe0;text-align:center;padding:2rem">Deskly — Ideas deserve a better space. Email hello@deskly.in to book.</p></noscript>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
