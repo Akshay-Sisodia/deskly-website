@@ -355,14 +355,16 @@ const glassR = glassL.clone(); glassR.position.x = 2.75; scene.add(glassR);
 box(10, .1, .12, MAT.black, 0, 3.15, 2);
 box(4.45, .1, .12, MAT.black, -2.775, .06, 2); box(4.45, .1, .12, MAT.black, 2.775, .06, 2);
 box(10, .025, .09, MAT.brass, 0, .008, 2.25, false); // threshold strip hides the floor seam
-// glass door on hinge — opens ahead of you, closes behind you
-box(.09, 2.62, .14, MAT.black, -.55, 1.36, 2);
-box(.09, 2.62, .14, MAT.black, .55, 1.36, 2);
+/* Glass door on hinge — full height, jamb to head rail, so there's no stub of
+   transom above it. Wall glass spans y 0..3.2 and the head rail sits at 3.10,
+   so the leaf tops out just under that. */
+box(.09, 3.05, .14, MAT.black, -.55, 1.575, 2);
+box(.09, 3.05, .14, MAT.black, .55, 1.575, 2);
 const glassPivot = new THREE.Group(); glassPivot.position.set(-.5, 0, 2); scene.add(glassPivot);
-const glassPanel = new THREE.Mesh(new RoundedBoxGeometry(1, 2.5, .04, 3, .012), MAT.glass.clone());
-glassPanel.position.set(.5, 1.31, 0); glassPanel.castShadow = true; glassPivot.add(glassPanel);
+const glassPanel = new THREE.Mesh(new RoundedBoxGeometry(1, 3.02, .04, 3, .012), MAT.glass.clone());
+glassPanel.position.set(.5, 1.57, 0); glassPanel.castShadow = true; glassPivot.add(glassPanel);
 const railT = new THREE.Mesh(new RoundedBoxGeometry(1, .09, .07, 3, .014), MAT.black);
-railT.position.set(.5, 2.52, 0); glassPivot.add(railT);
+railT.position.set(.5, 3.035, 0); glassPivot.add(railT);
 const railB = railT.clone(); railB.position.y = .1; glassPivot.add(railB);
 const pullSt1 = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .05, 8), MAT.brass);
 pullSt1.rotation.x = Math.PI / 2; pullSt1.position.set(.82, 1.7, .045); glassPivot.add(pullSt1);
