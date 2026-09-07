@@ -27,19 +27,20 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 2 : 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.92;
+renderer.toneMappingExposure = 0.78;
 renderer.shadowMap.enabled = !isMobile;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.shadowMap.autoUpdate = false;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x0b0908);
-scene.fog = new THREE.FogExp2(0x0b0908, 0.024);
+scene.background = new THREE.Color(0xece5d9);
+scene.fog = new THREE.FogExp2(0xe9e2d5, 0.005);
 
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
-const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.12, 120);
+const fovFor = (aspect) => (aspect < 1 ? 50 + (1 - aspect) * 26 : 50);
+const camera = new THREE.PerspectiveCamera(fovFor(innerWidth / innerHeight), innerWidth / innerHeight, 0.12, 120);
 
 const TEX = await createTextures(HI);
 const MAT = createMaterials(TEX);
@@ -66,7 +67,7 @@ function contactShadow(x, z, sx, sz, op = .55) {
     new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: op, depthWrite: false }));
   m.rotation.x = -Math.PI / 2; m.position.set(x, .025, z); scene.add(m); return m;
 }
-function lightPool(x, z, sx, sz, color = 0xffbe78, op = .16) {
+function lightPool(x, z, sx, sz, color = 0xffbe78, op = .06) {
   const m = new THREE.Mesh(new THREE.PlaneGeometry(sx, sz),
     new THREE.MeshBasicMaterial({ map: glowTex, color, transparent: true, opacity: op, blending: THREE.AdditiveBlending, depthWrite: false }));
   m.rotation.x = -Math.PI / 2; m.position.set(x, .034, z); scene.add(m); return m;
@@ -76,7 +77,7 @@ const cupGeo = new THREE.CylinderGeometry(.042, .034, .09, 12);
 const cofGeo = new THREE.CircleGeometry(.036, 12);
 const penGeo = new THREE.CylinderGeometry(.004, .004, .11, 5);
 const canGeo = new THREE.CylinderGeometry(.065, .065, .025, 10);
-const canMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(2.1, 1.25, .62) });
+const canMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.12, 1.06, .96) });
 function placeCup(x, y, z) {
   const cup = new THREE.Mesh(cupGeo, MAT.paper);
   cup.position.set(x, y, z); scene.add(cup);
@@ -105,9 +106,12 @@ function wallSign(map, w, h, x, y, z, ry = 0) {
    surface lands on the same hue and the rooms read flat. Held near zero in the
    windowless corridor, where cool skylight would be a lie, and ramped up on
    entering the daylit rooms. */
-const bounce = new THREE.HemisphereLight(0x6d7c8c, 0x241608, .08);
+const bounce = new THREE.HemisphereLight(0xe6e2d8, 0xc4b7a2, 1.25);
 scene.add(bounce);
-const doorSpot = new THREE.SpotLight(0xffb46b, 0, 22, .65, .55, 1.2);
+const corridorWash = new THREE.SpotLight(0xfff1de, 26, 16, .9, .85, 1.5);
+corridorWash.position.set(0, 3.1, 16.8); corridorWash.target.position.set(0, 0, 15.2);
+scene.add(corridorWash, corridorWash.target);
+const doorSpot = new THREE.SpotLight(0xffe6c8, 0, 22, .65, .55, 1.2);
 doorSpot.position.set(0, 1.4, 10.2); doorSpot.target.position.set(0, 1, 16.5);
 scene.add(doorSpot, doorSpot.target);
 
@@ -141,7 +145,7 @@ scene.add(sun, sun.target);
 // pendant warmth is carried by emissive bulbs + halos (no point-light cost)
 
 /* ================= corridor + doorway ================= */
-box(4.6, .2, 8.45, MAT.darkWall, 0, -.1, 16.275); // ends at 12.05 — meets room floor, no overlap
+box(4.6, .2, 8.45, MAT.floorA, 0, -.1, 16.275); // ends at 12.05 — meets room floor, no overlap
 box(.25, 3.4, 9.8, MAT.darkWall, -2.3, 1.6, 15.9);
 box(.25, 3.4, 9.8, MAT.darkWall, 2.3, 1.6, 15.9);
 box(4.8, .25, 9, MAT.felt, 0, 3.3, 16);
@@ -152,13 +156,10 @@ box(1.9, .8, .3, MAT.darkWall, 0, 2.9, 11.9);
 box(.2, 2.6, .5, MAT.oakDark, -.9, 1.2, 12);
 box(.2, 2.6, .5, MAT.oakDark, .9, 1.2, 12);
 box(2, .2, .5, MAT.oakDark, 0, 2.55, 12);
-// skirting glow strips in corridor (bloom catches these)
-[-2.12, 2.12].map((sx) =>
-  box(.03, .05, 8.6, new THREE.MeshBasicMaterial({ color: new THREE.Color(1.6, 1, .5) }), sx, .12, 16, false));
 // door panel on hinge
 const doorPivot = new THREE.Group(); doorPivot.position.set(-.8, 0, 12); scene.add(doorPivot);
 const doorPanel = new THREE.Mesh(new RoundedBoxGeometry(1.6, 2.44, .1, 4, .03),
-  phys({ color: 0x4f3620, roughness: .42, clearcoat: .6, clearcoatRoughness: .4, envMapIntensity: .8 }));
+  phys({ color: 0x7d5228, roughness: .6, clearcoat: .18, clearcoatRoughness: .7, envMapIntensity: .22 }));
 doorPanel.position.set(.8, 1.26, 0); doorPanel.castShadow = true; doorPivot.add(doorPanel);
 [.75, 1.75].map((py) => {
   const mould = new THREE.Mesh(new RoundedBoxGeometry(1.1, .8, .03, 3, .012), MAT.oakDark);
@@ -180,7 +181,7 @@ const leverB = leverF.clone(); leverB.position.z = -.062; leverB.rotation.y = Ma
 const armB = leverB.children[1];
 // warm blade of light beneath the door
 const gapLight = new THREE.Mesh(new THREE.PlaneGeometry(1.62, .06),
-  new THREE.MeshBasicMaterial({ color: new THREE.Color(4, 2.2, 1), transparent: true, opacity: .95 }));
+  new THREE.MeshBasicMaterial({ color: new THREE.Color(1.3, 1.2, 1.05), transparent: true, opacity: .3 }));
 gapLight.rotation.x = -Math.PI / 2; gapLight.position.set(0, .032, 12.4); scene.add(gapLight);
 // brass plaque
 const plaque = new THREE.Mesh(new THREE.PlaneGeometry(.7, .175),
@@ -196,7 +197,7 @@ kick.position.set(.8, .12, .056); doorPivot.add(kick);
 [[-2.05, 14.2], [2.05, 14.2], [-2.05, 17.4], [2.05, 17.4]].map(([sx, sz]) => {
   const arm = box(.04, .18, .08, MAT.brass, sx, 2.05, sz, false);
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(.035, 8, 8),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(3.6, 2.1, 1.1) }));
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(1.4, 1.34, 1.22) }));
   bulb.position.set(sx + (sx > 0 ? -.06 : .06), 1.92, sz); scene.add(bulb);
   return arm;
 });
@@ -228,8 +229,8 @@ box(.06, .08, 10.2, MAT.oakDark, 4.84, 1.1, 6.8, false); box(.06, .1, 10.2, MAT.
   inst.castShadow = true; inst.receiveShadow = true; scene.add(inst);
 }
 // cove light strips (HDR — bloom glow lines)
-const coveMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(2.2, 1.35, .62) });
-const stripMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(.85, .5, .22) });
+const coveMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.08, 1.03, .94) });
+const stripMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(.62, .55, .46) });
 box(9.6, .05, .08, coveMat, 0, 3.18, 2.35, false);
 box(.08, .05, 9.4, coveMat, -4.8, 3.18, 6.8, false);
 box(.08, .05, 9.4, coveMat, 4.8, 3.18, 6.8, false);
@@ -238,7 +239,7 @@ box(11.6, .05, .08, coveMat, 0, 3.3, -11.9, false);
 // rug + contact shadows + warm light pools
 const rug = new THREE.Mesh(new THREE.CircleGeometry(3.2, 48), std({ map: rugTex, roughness: 1 }));
 rug.rotation.x = -Math.PI / 2; rug.position.set(0, .012, 7); rug.receiveShadow = true; scene.add(rug);
-contactShadow(0, 7, 5.8, 3.2, .6); lightPool(0, 7, 6.6, 3.8);
+contactShadow(0, 7, 5.8, 3.2, .6); lightPool(0, 7, 6.6, 3.8, 0xffbe78, .05);
 // table with brass inlay
 rbox(4.6, .11, 1.6, .05, MAT.oak, 0, .8, 7);
 box(.5, .115, .04, MAT.brass, 0, .8, 7, false);
@@ -313,17 +314,12 @@ const SEATS_A = [
   [-2.75, 7, Math.PI / 2], [2.75, 7, -Math.PI / 2],
 ];
 SEATS_A.forEach(([x, z, ry]) => chair(x, z, ry, MAT.fabric));
-const padGeo = new RoundedBoxGeometry(.46, .035, .46, 3, .012);
-SEATS_A.forEach(([x, z]) => {
-  const pad = new THREE.Mesh(padGeo, MAT.paper);
-  pad.position.set(x, .54, z); scene.add(pad);
-});
 function pendant(x, y, z, r = .24, ceil = 3.24) {
   const shade = new THREE.Mesh(new THREE.CylinderGeometry(r * .2, r, .22, 12, 1, true),
     std({ color: 0x191410, roughness: .5, metalness: .4, side: THREE.DoubleSide }));
   shade.position.set(x, y + .08, z); scene.add(shade);
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(.04, 8, 8),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(4.2, 2.4, 1.1) }));
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(1.5, 1.42, 1.28) }));
   bulb.position.set(x, y, z); scene.add(bulb);
   const cord = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, Math.max(.2, ceil - y - .1), 6), MAT.black);
   cord.position.set(x, (ceil + y + .06) / 2, z); scene.add(cord);
@@ -414,7 +410,7 @@ wallSign(TEX.plaqueB, .72, .18, -5.86, 2.72, -2.4, Math.PI / 2);
 wallSign(TEX.clock, .42, .42, 5.86, 2.35, -2.2, -Math.PI / 2);
 placeCans([[-3.2, -2.2], [0, -2.2], [3.2, -2.2], [-3.2, -7.8], [0, -7.8], [3.2, -7.8]], 3.42);
 box(11.6, .12, .28, MAT.oakDark, 0, .06, 1.85);
-contactShadow(0, -5, 7.4, 3.4, .6); lightPool(0, -5, 7, 3.2, 0xffbe78, .13);
+contactShadow(0, -5, 7.4, 3.4, .6); lightPool(0, -5, 7, 3.2, 0xffbe78, .05);
 [-2.4, -.8, .8, 2.4].forEach((x) => {
   rbox(.34, .025, .26, .006, MAT.paper, x, .9, -4.55);
   const lined = new THREE.Mesh(new THREE.PlaneGeometry(.3, .22), std({ map: TEX.notepad, roughness: .82 }));
@@ -473,7 +469,7 @@ SEATS_B.forEach(([x, z, ry]) => chair(x, z, ry, MAT.fabricDark));
   const book = new THREE.Mesh(new RoundedBoxGeometry(.14, .03, .2, 2, .006), std({ color: 0x2a3a44, roughness: .7 }));
   book.position.set(2.68, .585, -9.7); book.rotation.y = -.2; scene.add(book);
   pendant(4.5, 1.7, -10.4, .2, 3.38);
-  contactShadow(3.7, -10.2, 2.6, 2.2, .5); lightPool(3.7, -10.2, 3, 2.6, 0xffbe78, .14);
+  contactShadow(3.7, -10.2, 2.6, 2.2, .5); lightPool(3.7, -10.2, 3, 2.6, 0xffbe78, .05);
 }
 
 /* ================= window + golden hour ================= */
@@ -498,21 +494,18 @@ sheerCurtain(5, 1, .28);
   pot.position.set(x, .22, -11.55); scene.add(pot);
   return pot;
 });
-lightPool(0, -10, 10, 3.4, 0xff9a50, .12);
+lightPool(0, -10, 10, 3.4, 0xff9a50, .05);
 sheerCurtain(-5, 0, .32);
 {
   // Photoreal city plate fills the window — soft haze near glass, no cartoon treeline
   const city = new THREE.Mesh(new THREE.PlaneGeometry(42, 18),
     new THREE.MeshBasicMaterial({ map: skyTex, fog: false }));
   city.position.set(0, 3.6, -26); scene.add(city);
-  const haze = new THREE.Mesh(new THREE.PlaneGeometry(28, 10),
-    new THREE.MeshBasicMaterial({ map: glowTex, color: 0xe09a55, transparent: true, opacity: .1, depthWrite: false }));
-  haze.position.set(0, 2.4, -16); scene.add(haze);
   const sunSpr = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: glowTex, color: 0xffd9a0, transparent: true, opacity: .28,
+    map: glowTex, color: 0xffd9a0, transparent: true, opacity: .07,
     blending: THREE.AdditiveBlending, depthWrite: false, fog: false,
   }));
-  sunSpr.scale.set(11, 11, 1); sunSpr.position.set(6, 6.2, -26); scene.add(sunSpr);
+  sunSpr.scale.set(8, 8, 1); sunSpr.position.set(6, 6.2, -26); scene.add(sunSpr);
 }
 
 /* ================= dust + shafts ================= */
@@ -525,13 +518,13 @@ if (HI) {
     pos[i * 3 + 2] = -11 + Math.random() * 24;
   });
   const dg = new THREE.BufferGeometry(); dg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  dust = new THREE.Points(dg, new THREE.PointsMaterial({ map: glowTex, color: 0xffd9a8, size: .045, transparent: true, opacity: .4, blending: THREE.AdditiveBlending, depthWrite: false }));
+  dust = new THREE.Points(dg, new THREE.PointsMaterial({ map: glowTex, color: 0xffd9a8, size: .045, transparent: true, opacity: .18, blending: THREE.AdditiveBlending, depthWrite: false }));
   scene.add(dust);
 }
 // window light shaft
 {
   const shaft = new THREE.Mesh(new THREE.PlaneGeometry(10, 7),
-    new THREE.MeshBasicMaterial({ map: glowTex, color: 0xff9a50, transparent: true, opacity: .1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+    new THREE.MeshBasicMaterial({ map: glowTex, color: 0xff9a50, transparent: true, opacity: .04, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
   shaft.position.set(0, 1.6, -9.5); shaft.rotation.x = -.5; scene.add(shaft);
 }
 
@@ -546,9 +539,9 @@ function enableBloom() {
     samples: 4, type: THREE.HalfFloatType,
   }));
   composer.addPass(new RenderPass(scene, camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .18, .5, .92));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .06, .6, .98));
   composer.addPass(new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, uVig: { value: .42 } },
+    uniforms: { tDiffuse: { value: null }, uVig: { value: .14 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: `
       uniform sampler2D tDiffuse; uniform float uVig; varying vec2 vUv;
@@ -560,7 +553,7 @@ function enableBloom() {
         // Filmic split-tone: warm highlights, cool shadows. The separation is
         // what reads as "graded" — a uniform warm push just reads as sepia.
         float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
-        c.rgb += vec3(-0.016, -0.004, 0.022) * (1.0 - smoothstep(0.0, 0.45, l));
+        c.rgb += vec3(-0.006, -0.002, 0.009) * (1.0 - smoothstep(0.0, 0.45, l));
         c.rgb += vec3( 0.026,  0.010, -0.020) * smoothstep(0.35, 1.0, l);
         // gentle S-curve for contrast without crushing either end
         c.rgb = mix(c.rgb, c.rgb * c.rgb * (3.0 - 2.0 * c.rgb), 0.22);
@@ -800,19 +793,20 @@ function updateDoorAndLights(u, dt) {
     lastDoorP = doorP;
     if (renderer.shadowMap.enabled) renderer.shadowMap.needsUpdate = true;
   }
-  gapLight.material.opacity = .95 * (1 - doorP);
-  doorSpot.intensity = doorP * 42 * (1 - u * .35);
+  gapLight.material.opacity = .3 * (1 - doorP);
+  doorSpot.intensity = doorP * 9 * (1 - u * .35);
   leakCur = damp(leakCur, doorP * (1 - doorP) * 3.0, 8, dt);
   if (Math.abs(leakCur - lastLeak) > 0.015) {
     lastLeak = leakCur;
     leak.style.opacity = leakCur.toFixed(3);
   }
-  keyA.intensity = 8 + smoothstep01((u - 0.14) / 0.18) * 36;
-  keyB.intensity = 6 + smoothstep01((u - 0.55) / 0.2) * 52;
-  daylight.intensity = 18 + smoothstep01((u - 0.6) / 0.22) * 34;
-  sun.intensity = .3 + smoothstep01((u - 0.72) / 0.18) * 1.7;
-  bounce.intensity = .08 + smoothstep01((u - 0.12) / 0.24) * .46;
-  scene.fog.density = .05 - u * .033;
+  corridorWash.intensity = 26 * (1 - smoothstep01((u - 0.1) / 0.16));
+  keyA.intensity = 4 + smoothstep01((u - 0.14) / 0.18) * 9;
+  keyB.intensity = 3 + smoothstep01((u - 0.55) / 0.2) * 12;
+  daylight.intensity = 26 + smoothstep01((u - 0.6) / 0.22) * 24;
+  sun.intensity = .9 + smoothstep01((u - 0.72) / 0.18) * 1.2;
+  bounce.intensity = 1.25 + smoothstep01((u - 0.12) / 0.24) * .95;
+  scene.fog.density = .008 - u * .005;
 }
 
 function updateGlassAndScreens(u) {
@@ -872,7 +866,7 @@ function frame(now) {
 function onResize() {
   const w = innerWidth;
   const h = visualViewport?.height || innerHeight;
-  camera.aspect = w / h; camera.updateProjectionMatrix();
+  camera.aspect = w / h; camera.fov = fovFor(camera.aspect); camera.updateProjectionMatrix();
   renderer.setSize(w, h);
   if (composer) composer.setSize(w, h);
   ScrollTrigger.refresh();

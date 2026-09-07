@@ -47,8 +47,16 @@ ship (measured via computed styles, not trend pieces):
   (Aman uses #313131/#585858), near-black accent. Deliberately **no metallic
   accent**: Rosewood, Soho House and Aman all use black or dark grey buttons.
   Every reference site is light and warm; none are dark.
-- The hero film stays a dark room, so `--film-ink*` keeps its type light and the
-  nav inverts past `#filmRun` via `body.past-film`.
+- The hero film is a **daylit** room, so it shares the page's ink and the nav
+  needs no inversion. `--film-ink*` now alias `--ink*`; keep the indirection so
+  the film can be re-graded independently later.
+- Relighting for daylight meant: sky-dominant hemisphere bounce, near-neutral
+  (not blue) sky so the woods don't read grey, lamps demoted to accents,
+  emissive strips and bulbs pulled back near 1.0, bloom to .06 at a .98
+  threshold, fog density 0.022 -> 0.005, and no additive haze plane. Every one
+  of those was a visible source of milkiness.
+- Camera FOV widens in portrait (`fovFor`) — a fixed 50° vertical crops
+  horizontally on phones and the door filled the frame.
 - The logo ships ivory-on-dark, so it renders as a CSS mask (`.brand-mark`) and
   takes its colour from `currentColor` — one file, both nav states.
 
@@ -61,6 +69,8 @@ ship (measured via computed styles, not trend pieces):
 - The hero film owns `#filmRun` (340vh) and nothing else. Past it the canvas
   stops rendering entirely.
 - Honours `prefers-reduced-motion`; mobile drops shadows, bloom and dust.
+- Slate scrims are stronger on mobile: a portrait frame is filled by its
+  subject, so the desktop scrim can't lift geometry behind the type.
 
 ## Content still to confirm
 

@@ -12,9 +12,9 @@
   --rule:rgba(43,42,40,.14);
   --rule-strong:rgba(43,42,40,.26);
 
-  /* the film stays a dark room; its type has to stay light */
-  --film-ink:#f4efe7;
-  --film-ink-2:rgba(244,239,231,.76);
+  /* the film is a daylit room, so it shares the page's ink */
+  --film-ink:var(--ink);
+  --film-ink-2:var(--ink-2);
 
   --display:"EB Garamond",Georgia,"Times New Roman",serif;
   --sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -79,12 +79,12 @@ img{display:block;max-width:100%;height:auto}
 .link-accent img{width:14px;height:14px;flex:none}
 
 /* ---------------- loader ---------------- */
-#loader{position:fixed;inset:0;z-index:100;background:#080706;display:grid;place-items:center}
+#loader{position:fixed;inset:0;z-index:100;background:var(--paper);display:grid;place-items:center}
 .brand{display:flex;align-items:center;color:inherit;text-decoration:none}
 .brand-mark{display:block;background:currentColor;
   -webkit-mask:url("./assets/logo.svg") no-repeat center/contain;
           mask:url("./assets/logo.svg") no-repeat center/contain}
-.ld-logo{width:min(150px,44vw);aspect-ratio:292/40;color:var(--film-ink);opacity:.6}
+.ld-logo{width:min(150px,44vw);aspect-ratio:292/40;color:var(--ink);opacity:.45}
 .nav-mark{width:148px;aspect-ratio:292/40}
 .foot-mark{width:132px;aspect-ratio:292/40;color:var(--ink)}
 
@@ -98,41 +98,31 @@ body.entered .nav{opacity:1;pointer-events:auto}
 .nav::before{content:"";position:absolute;inset:0;z-index:-1;
   background:rgba(243,238,231,.86);backdrop-filter:blur(14px);
   border-bottom:1px solid var(--rule);
-  opacity:0;transition:opacity .4s ease}
-body.past-film .nav::before{opacity:1}
-.nav{color:var(--film-ink)}
+  }
+.nav{color:var(--ink)}
 .nav-links{display:flex;gap:2rem}
-.nav-links a{color:var(--film-ink-2);text-decoration:none;font-size:.8125rem;font-weight:500;
+.nav-links a{color:var(--ink-3);text-decoration:none;font-size:.8125rem;font-weight:500;
   letter-spacing:.1em;text-transform:uppercase;transition:color .25s}
-.nav-links a:hover,.nav-links a[aria-current="true"]{color:var(--film-ink)}
-/* past the film the nav sits on paper, so it flips to ink */
-body.past-film .nav{color:var(--ink)}
-body.past-film .nav-links a{color:var(--ink-3)}
-body.past-film .nav-links a:hover,body.past-film .nav-links a[aria-current="true"]{color:var(--ink)}
+.nav-links a:hover,.nav-links a[aria-current="true"]{color:var(--ink)}
 .nav-cta{padding:.62rem 1.15rem;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
-/* the pill has to invert with the nav or it vanishes into the dark film */
-.nav-cta{background:var(--film-ink);color:#1b1a18;border-color:var(--film-ink)}
-.nav-cta img{filter:none}
-.nav-cta:hover{background:#fff;border-color:#fff}
-body.past-film .nav-cta{background:var(--accent);color:var(--paper);border-color:var(--accent)}
-body.past-film .nav-cta:hover{background:var(--accent-soft);border-color:var(--accent-soft)}
+
 
 /* ---------------- hero film ---------------- */
 .hero{position:relative}
 #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0}
 .hero-grade{position:fixed;inset:0;z-index:2;pointer-events:none;
   background:
-    radial-gradient(ellipse at 50% 44%,transparent 52%,rgba(0,0,0,.42) 100%),
-    linear-gradient(180deg,rgba(11,10,9,.5) 0%,transparent 22%,transparent 62%,rgba(11,10,9,.72) 100%)}
-.grain{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;mix-blend-mode:multiply;
+    radial-gradient(ellipse at 50% 46%,transparent 72%,rgba(243,238,231,.2) 100%),
+    linear-gradient(180deg,rgba(243,238,231,.22) 0,transparent 14%,transparent 78%,rgba(243,238,231,.3) 100%)}
+.grain{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.04;mix-blend-mode:multiply;
   background-image:url("./assets/grain.svg");background-size:260px 260px}
-.letterbox{position:fixed;left:0;right:0;height:0;background:#000;z-index:4;pointer-events:none;
+.letterbox{position:fixed;left:0;right:0;height:0;background:var(--paper);z-index:4;pointer-events:none;
   transition:height .8s ease}
 .letterbox.top{top:0;transform-origin:50% 0}
 .letterbox.bottom{bottom:0;transform-origin:50% 100%}
 body.entered .letterbox{height:5.5vh}
 .light-leak{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;mix-blend-mode:screen;
-  background:radial-gradient(ellipse 58% 38% at 50% 54%,rgba(255,182,110,.32),transparent 70%)}
+  background:radial-gradient(ellipse 58% 38% at 50% 54%,rgba(255,236,206,.5),transparent 72%)}
 
 /* The film's furniture is scrubbed out over the tail of #filmRun (see main.js);
    past-film only kills interaction, since rendering stops there anyway. */
@@ -145,17 +135,20 @@ body.past-film #stage,body.past-film .hero-grade,body.past-film .letterbox{point
   padding-inline:var(--gutter);opacity:0;visibility:hidden}
 .slate.lower{justify-content:flex-end;padding-bottom:16vh}
 .slate::before{content:"";position:absolute;left:50%;top:50%;translate:-50% -50%;
-  width:min(760px,94vw);height:44vh;pointer-events:none;border-radius:50%;
-  background:radial-gradient(ellipse at 50% 50%,rgba(8,7,6,.6),rgba(8,7,6,.24) 46%,transparent 74%)}
-.slate.lower::before{top:auto;bottom:2vh;translate:-50% 0;height:42vh;width:min(1000px,100vw);
-  background:radial-gradient(ellipse at 50% 62%,rgba(8,7,6,.8),rgba(8,7,6,.4) 44%,transparent 76%)}
+  width:min(1100px,110vw);height:70vh;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 50%,rgba(243,238,231,.34) 0,rgba(243,238,231,.2) 34%,
+    rgba(243,238,231,.07) 60%,transparent 84%)}
+.slate.lower::before{top:auto;bottom:-4vh;translate:-50% 0;height:62vh;width:min(1200px,115vw);
+  background:radial-gradient(ellipse at 50% 66%,rgba(243,238,231,.42) 0,rgba(243,238,231,.26) 34%,
+    rgba(243,238,231,.09) 60%,transparent 86%)}
 .slate > *{position:relative}
-.slate h1,.slate h2{text-shadow:0 2px 30px rgba(0,0,0,.75),0 1px 3px rgba(0,0,0,.55)}
+.slate h1,.slate h2{text-shadow:0 1px 24px rgba(243,238,231,.9)}
 .slate{color:var(--film-ink)}
-.slate .eyebrow,.slate .eyebrow-accent{color:var(--film-ink-2);text-shadow:0 1px 10px rgba(0,0,0,.85)}
-.slate .display-xl em,.slate .display-l em{color:var(--film-ink)}
-.slate-sub{margin-top:1.5rem;font-size:1rem;letter-spacing:.02em;color:var(--film-ink-2);
-  text-shadow:0 1px 10px rgba(0,0,0,.8)}
+.slate .eyebrow,.slate .eyebrow-accent{color:var(--ink);
+  text-shadow:0 0 14px rgba(243,238,231,1),0 1px 3px rgba(243,238,231,.9)}
+
+.slate-sub{margin-top:1.5rem;font-size:1rem;letter-spacing:.02em;color:var(--ink-2);
+  text-shadow:0 1px 12px rgba(243,238,231,.95)}
 .l{display:block;overflow:hidden;padding:0 .1em .1em;margin:0 -.1em -.1em}
 
 .scroll-hint{position:fixed;bottom:calc(8vh + env(safe-area-inset-bottom));left:50%;translate:-50% 0;
@@ -163,7 +156,7 @@ body.past-film #stage,body.past-film .hero-grade,body.past-film .letterbox{point
   font-size:.625rem;letter-spacing:.3em;text-transform:uppercase;color:var(--film-ink-2);
   opacity:0;transition:opacity .5s}
 body.entered .scroll-hint{opacity:1}
-.scroll-rule{width:1px;height:44px;background:linear-gradient(180deg,transparent,var(--film-ink));
+.scroll-rule{width:1px;height:44px;background:linear-gradient(180deg,transparent,var(--ink));
   animation:drop 2.4s ease-in-out infinite}
 @keyframes drop{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
 .scroll-rule{transform-origin:top}
@@ -306,6 +299,12 @@ main{position:relative;z-index:10}
   body.entered .letterbox{height:3vh}
   .slate.lower{padding-bottom:20vh}
   .slate-sub{font-size:.9375rem;margin-top:1.15rem}
+  .slate::before{width:150vw;height:78vh;
+    background:radial-gradient(ellipse at 50% 50%,rgba(243,238,231,.78) 0,rgba(243,238,231,.58) 34%,
+      rgba(243,238,231,.3) 62%,rgba(243,238,231,.08) 80%,transparent 92%)}
+  .slate.lower::before{bottom:-6vh;height:74vh;
+    background:radial-gradient(ellipse at 50% 68%,rgba(243,238,231,.78) 0,rgba(243,238,231,.58) 34%,
+      rgba(243,238,231,.3) 62%,rgba(243,238,231,.08) 80%,transparent 92%)}
   .lede-facts{grid-template-columns:1fr 1fr;gap:1.75rem 1.5rem}
   .spec{gap:1.15rem 1.5rem}
   .f-row{grid-template-columns:1fr}

@@ -198,31 +198,6 @@ function plasterRough(w, h) {
   }, w, h, false);
 }
 
-/** Near-black corridor plaster with warm dust. */
-function darkPlaster(w, h) {
-  return canvasTex((g) => {
-    g.fillStyle = '#1c1612';
-    g.fillRect(0, 0, w, h);
-    [...Array(120)].map((_, i) => {
-      const x = R(i) * w;
-      const y = R(i + 2) * h;
-      const r = 20 + R(i + 5) * 60;
-      g.fillStyle = `rgba(${50 + R(i) * 20},${36},${24},${0.04 + R(i) * 0.06})`;
-      g.beginPath();
-      g.arc(x, y, r, 0, 7);
-      g.fill();
-    });
-    [...Array(1600)].map((_, i) => {
-      g.fillStyle = `rgba(255,220,180,${0.01 + R(i) * 0.025})`;
-      g.fillRect(R(i * 2) * w, R(i * 3) * h, 1, 1);
-    });
-    // skirting scuff band suggestion
-    g.fillStyle = 'rgba(0,0,0,.18)';
-    g.fillRect(0, h * 0.88, w, h * 0.12);
-    paintNoise(g, w, h, 12, 6);
-  }, w, h);
-}
-
 /** Wool herringbone for seating. */
 function wool(w, h, { fill = '#5a4e42', step = 8, seed = 8, diagonal = true } = {}) {
   return canvasTex((g) => {
@@ -303,15 +278,16 @@ function rug(w, h) {
   }, w, h);
 }
 
-/** Acoustic felt ceiling. */
+/** Acoustic ceiling panel — light, with a fine darker speckle. */
 function felt(w, h) {
   return canvasTex((g) => {
-    g.fillStyle = '#12100e';
+    g.fillStyle = '#ded7c9';
     g.fillRect(0, 0, w, h);
-    [...Array(2000)].map((_, i) => {
-      g.fillStyle = `rgba(255,230,200,${0.01 + R(i) * 0.03})`;
+    [...Array(2400)].map((_, i) => {
+      g.fillStyle = `rgba(96,86,70,${0.03 + R(i) * 0.06})`;
       g.fillRect(R(i) * w, R(i + 8) * h, 1, 1);
     });
+    paintNoise(g, w, h, 8, 3);
   }, w, h);
 }
 
@@ -342,11 +318,12 @@ export function createMaterials(tex) {
   const phys = (o) => new THREE.MeshPhysicalMaterial(o);
   return {
     wall: std({
-      map: tex.plaster, roughnessMap: tex.plasterRough, roughness: 0.92,
-      envMapIntensity: 0.22,
+      map: tex.plaster, roughnessMap: tex.plasterRough, roughness: 0.9,
+      envMapIntensity: 0.5,
     }),
     darkWall: std({
-      map: tex.darkPlaster, roughness: 0.96, envMapIntensity: 0.1,
+      map: tex.plaster, roughnessMap: tex.plasterRough, color: 0xded4c3,
+      roughness: 0.94, envMapIntensity: 0.34,
     }),
     floorA: std({
       map: tex.oak, roughnessMap: tex.oakRough, roughness: 0.42, metalness: 0.04,
@@ -370,7 +347,7 @@ export function createMaterials(tex) {
     fabric: std({ map: tex.wool, roughness: 0.95, envMapIntensity: 0.2 }),
     fabricDark: std({ map: tex.woolDark, roughness: 0.96, envMapIntensity: 0.18 }),
     leather: std({ map: tex.leather, roughness: 0.72, envMapIntensity: 0.35 }),
-    felt: std({ map: tex.felt, roughness: 1, envMapIntensity: 0.08 }),
+    felt: std({ map: tex.felt, roughness: 1, envMapIntensity: 0.35 }),
     brass: std({ color: 0xc2a67a, roughness: 0.32, metalness: 1, envMapIntensity: 1.15 }),
     black: std({ color: 0x12100d, roughness: 0.65, metalness: 0.25 }),
     glass: phys({
@@ -397,8 +374,6 @@ export async function createTextures(hi) {
   const plasterRoughTex = plasterRough(256, 256);
   plasterTex.repeat.set(2.4, 2.4);
   plasterRoughTex.repeat.set(2.4, 2.4);
-  const darkPlasterTex = darkPlaster(size, size);
-  darkPlasterTex.repeat.set(1.8, 1.8);
 
   const woolTex = wool(256, 256);
   const woolDarkTex = wool(256, 256, { fill: '#3a342e', step: 7, seed: 9, diagonal: false });
@@ -413,7 +388,6 @@ export async function createTextures(hi) {
     oakRough: oakRoughTex,
     plaster: plasterTex,
     plasterRough: plasterRoughTex,
-    darkPlaster: darkPlasterTex,
     wool: woolTex,
     woolDark: woolDarkTex,
     leather: leather(256, 256),
