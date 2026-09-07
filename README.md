@@ -43,12 +43,11 @@ ship (measured via computed styles, not trend pieces):
 - **Type** — EB Garamond (display) + Manrope (text). Hermès's exact stack; both
   free. Old-style serifs dominate the reference set — Caslon at Norm Architects,
   Cardo at Soho House, Lyon at Aman — not didones.
-- **Palette — chalk, ink, pine.** `#f4f3ee` paper, `#1e211d` ink, `#1b3a2f`
-  accent. Two things this fixes over the first benchmark-derived set: Aman's
-  `#f3eee7` bone is a warm beige, and a near-black accent left the palette with
-  no colour identity at all. Pine is the one colour Rosewood allows itself
-  (`#013d2d` on their buttons). Still **no metallic** — none of the references
-  use one. Every reference page is light; none are dark.
+- **Palette — bone, ink, pine.** `#f3eee7` paper (Aman's bone), `#24231f` ink,
+  `#1b3a2f` accent. Effectively Norm Architects' bone plus the one colour
+  Rosewood allows itself (`#013d2d` on their buttons). Ink is warm-neutral so
+  it sits on bone without going cold against the pine. Still **no metallic** —
+  none of the references use one. Every reference page is light; none are dark.
 - **Hero pattern, measured off the references.** Rosewood, Singita, Nihi and
   Aethos all run large white type, centred, with *no* text-shadow and no scrim,
   over an atmospheric image, under a light page. So the film stays a warm

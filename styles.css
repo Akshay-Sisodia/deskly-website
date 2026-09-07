@@ -1,18 +1,16 @@
 :root{
-  /* Chalk, ink, pine. Two fixes on the previous set: the bone (#f3eee7) was a
-     warm beige, and the accent was near-black so nothing carried the brand.
-     Paper is now neutral; ink is a true deep ink with a faint green cast rather
-     than warm grey; the accent is a deep pine — the one colour Rosewood allows
-     itself (#013d2d on their buttons). */
-  --paper:#f4f3ee;
-  --paper-card:#fbfaf7;
-  --ink:#1e211d;
-  --ink-2:rgba(30,33,29,.76);
-  --ink-3:rgba(30,33,29,.5);
+  /* Aman's bone paper with a pine accent — effectively Norm Architects' bone
+     plus the one colour Rosewood allows itself. Ink is warm-neutral so it sits
+     on bone without going cold against the pine. Still no metallic. */
+  --paper:#f3eee7;
+  --paper-card:#faf7f2;
+  --ink:#24231f;
+  --ink-2:rgba(36,35,31,.76);
+  --ink-3:rgba(36,35,31,.5);
   --accent:#1b3a2f;
   --accent-soft:#2c5746;
-  --rule:rgba(30,33,29,.13);
-  --rule-strong:rgba(30,33,29,.24);
+  --rule:rgba(36,35,31,.14);
+  --rule-strong:rgba(36,35,31,.25);
 
   /* Luxury property heroes (Rosewood, Singita, Nihi, Aethos) are all large
      white type, centred, no shadow, over an atmospheric image — under a light
@@ -242,7 +240,7 @@ main{position:relative;z-index:10}
 #bookForm label{display:grid;gap:.5rem}
 .lbl{display:flex;align-items:baseline;gap:.5rem;font-size:.625rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--ink-3)}
-.opt{text-transform:none;letter-spacing:.02em;color:rgba(30,33,29,.4);font-size:.6875rem}
+.opt{text-transform:none;letter-spacing:.02em;color:rgba(36,35,31,.4);font-size:.6875rem}
 #bookForm input,#bookForm select,#bookForm textarea{
   background:var(--paper-card);border:1px solid var(--rule-strong);color:var(--ink);
   border-radius:4px;padding:.9rem 1rem;font-size:1rem;font-family:var(--sans);
@@ -254,11 +252,11 @@ main{position:relative;z-index:10}
                    linear-gradient(135deg,var(--accent) 50%,transparent 50%);
   background-position:calc(100% - 1.25rem) 1.35rem,calc(100% - 1rem) 1.35rem;
   background-size:5px 5px,5px 5px;background-repeat:no-repeat}
-#bookForm input:hover,#bookForm select:hover,#bookForm textarea:hover{border-color:rgba(30,33,29,.4)}
+#bookForm input:hover,#bookForm select:hover,#bookForm textarea:hover{border-color:rgba(36,35,31,.42)}
 #bookForm input:focus,#bookForm select:focus,#bookForm textarea:focus{
   outline:none;border-color:var(--accent);background:#fff}
 #bookForm input:user-invalid{border-color:#a4442c}
-#bookForm ::placeholder{color:rgba(30,33,29,.34)}
+#bookForm ::placeholder{color:rgba(36,35,31,.35)}
 #bookForm input[type="date"],#bookForm input[type="time"]{cursor:text}
 ::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.6}
 .fine{font-size:.8125rem;color:var(--ink-3);margin-top:.35rem;min-height:1.2em}
