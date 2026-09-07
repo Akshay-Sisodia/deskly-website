@@ -40,7 +40,7 @@ img{display:block;max-width:100%;height:auto}
 /* ---------------- type ---------------- */
 .display-xl,.display-l,.display-m{font-family:var(--display);font-weight:400;
   letter-spacing:-.015em;text-wrap:balance}
-.display-xl{font-size:clamp(2.85rem,7.2vw,6.25rem);line-height:.98}
+.display-xl{font-size:clamp(2.7rem,6.2vw,5.35rem);line-height:1.0}
 .display-l{font-size:clamp(2.1rem,4.6vw,3.6rem);line-height:1.06}
 .display-m{font-size:clamp(1.6rem,2.8vw,2.35rem);line-height:1.18}
 .display-xl em,.display-l em,.display-m em{font-style:italic;color:var(--brass-lit)}
