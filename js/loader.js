@@ -28,9 +28,6 @@ export function createCinematicLoader() {
       if (document.fonts?.ready) await document.fonts.ready.catch(() => {});
       await frame();
     },
-    async mark() {
-      await frame();
-    },
     async finish() {
       await outroLoader(el);
     },
