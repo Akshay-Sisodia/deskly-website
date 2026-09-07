@@ -1,15 +1,18 @@
 :root{
-  /* Sampled off the benchmark set: Aman #f3eee7 bone, Aman #313131/#585858 text,
-     Rosewood/Soho House near-black buttons. Deliberately no metallic accent. */
-  --paper:#f3eee7;
-  --paper-card:#f9f6f1;
-  --ink:#2b2a28;
-  --ink-2:rgba(43,42,40,.78);
-  --ink-3:rgba(43,42,40,.54);
-  --accent:#1b1a18;
-  --accent-soft:#4a4844;
-  --rule:rgba(43,42,40,.14);
-  --rule-strong:rgba(43,42,40,.26);
+  /* Chalk, ink, pine. Two fixes on the previous set: the bone (#f3eee7) was a
+     warm beige, and the accent was near-black so nothing carried the brand.
+     Paper is now neutral; ink is a true deep ink with a faint green cast rather
+     than warm grey; the accent is a deep pine — the one colour Rosewood allows
+     itself (#013d2d on their buttons). */
+  --paper:#f4f3ee;
+  --paper-card:#fbfaf7;
+  --ink:#1e211d;
+  --ink-2:rgba(30,33,29,.76);
+  --ink-3:rgba(30,33,29,.5);
+  --accent:#1b3a2f;
+  --accent-soft:#2c5746;
+  --rule:rgba(30,33,29,.13);
+  --rule-strong:rgba(30,33,29,.24);
 
   /* Luxury property heroes (Rosewood, Singita, Nihi, Aethos) are all large
      white type, centred, no shadow, over an atmospheric image — under a light
@@ -50,7 +53,7 @@ img{display:block;max-width:100%;height:auto}
 .display-xl{font-size:clamp(2.9rem,6.8vw,5.9rem);line-height:1.02}
 .display-l{font-size:clamp(2.25rem,5vw,3.9rem);line-height:1.08}
 .display-m{font-size:clamp(1.7rem,3vw,2.55rem);line-height:1.2}
-.display-xl em,.display-l em,.display-m em{font-style:italic;color:var(--accent-soft)}
+.display-xl em,.display-l em,.display-m em{font-style:italic;color:var(--accent)}
 
 .eyebrow{font-size:.6875rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink-3);margin-bottom:1.15rem}
@@ -113,7 +116,7 @@ body.past-film .nav{color:var(--ink)}
 body.past-film .nav-links a{color:var(--ink-3)}
 body.past-film .nav-links a:hover,body.past-film .nav-links a[aria-current="true"]{color:var(--ink)}
 .nav-cta{padding:.62rem 1.15rem;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
-.nav-cta{background:var(--film-ink);color:#191510;border-color:var(--film-ink)}
+.nav-cta{background:var(--film-ink);color:#16211c;border-color:var(--film-ink)}
 .nav-cta img{filter:none}
 .nav-cta:hover{background:#fff;border-color:#fff}
 body.past-film .nav-cta{background:var(--accent);color:var(--paper);border-color:var(--accent)}
@@ -239,7 +242,7 @@ main{position:relative;z-index:10}
 #bookForm label{display:grid;gap:.5rem}
 .lbl{display:flex;align-items:baseline;gap:.5rem;font-size:.625rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--ink-3)}
-.opt{text-transform:none;letter-spacing:.02em;color:rgba(43,42,40,.4);font-size:.6875rem}
+.opt{text-transform:none;letter-spacing:.02em;color:rgba(30,33,29,.4);font-size:.6875rem}
 #bookForm input,#bookForm select,#bookForm textarea{
   background:var(--paper-card);border:1px solid var(--rule-strong);color:var(--ink);
   border-radius:4px;padding:.9rem 1rem;font-size:1rem;font-family:var(--sans);
@@ -251,11 +254,11 @@ main{position:relative;z-index:10}
                    linear-gradient(135deg,var(--accent) 50%,transparent 50%);
   background-position:calc(100% - 1.25rem) 1.35rem,calc(100% - 1rem) 1.35rem;
   background-size:5px 5px,5px 5px;background-repeat:no-repeat}
-#bookForm input:hover,#bookForm select:hover,#bookForm textarea:hover{border-color:rgba(43,42,40,.42)}
+#bookForm input:hover,#bookForm select:hover,#bookForm textarea:hover{border-color:rgba(30,33,29,.4)}
 #bookForm input:focus,#bookForm select:focus,#bookForm textarea:focus{
   outline:none;border-color:var(--accent);background:#fff}
 #bookForm input:user-invalid{border-color:#a4442c}
-#bookForm ::placeholder{color:rgba(43,42,40,.36)}
+#bookForm ::placeholder{color:rgba(30,33,29,.34)}
 #bookForm input[type="date"],#bookForm input[type="time"]{cursor:text}
 ::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.6}
 .fine{font-size:.8125rem;color:var(--ink-3);margin-top:.35rem;min-height:1.2em}
