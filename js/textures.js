@@ -319,42 +319,42 @@ export function createMaterials(tex) {
   return {
     wall: std({
       map: tex.plaster, roughnessMap: tex.plasterRough, roughness: 0.9,
-      envMapIntensity: 0.5,
+      envMapIntensity: 0.2,
     }),
     darkWall: std({
       map: tex.plaster, roughnessMap: tex.plasterRough, color: 0xded4c3,
-      roughness: 0.94, envMapIntensity: 0.34,
+      roughness: 0.94, envMapIntensity: 0.16,
     }),
     floorA: std({
       map: tex.oak, roughnessMap: tex.oakRough, roughness: 0.42, metalness: 0.04,
-      envMapIntensity: 0.75,
+      envMapIntensity: 0.3,
     }),
     floorB: std({
       map: tex.oak, color: 0xd2c8b8, roughnessMap: tex.oakRough, roughness: 0.46,
-      metalness: 0.04, envMapIntensity: 0.7,
+      metalness: 0.04, envMapIntensity: 0.28,
     }),
     oak: std({
       map: tex.oak, roughnessMap: tex.oakRough, roughness: 0.36, metalness: 0.06,
-      envMapIntensity: 0.9,
+      envMapIntensity: 0.34,
     }),
     oakDark: std({
-      map: tex.oak, color: 0x5a4030, roughnessMap: tex.oakRough, roughness: 0.55,
-      envMapIntensity: 0.45,
+      map: tex.oak, color: 0x9a7752, roughnessMap: tex.oakRough, roughness: 0.55,
+      envMapIntensity: 0.18,
     }),
     slat: std({
-      map: tex.oak, color: 0x8a6a48, roughness: 0.62, envMapIntensity: 0.35,
+      map: tex.oak, color: 0x8a6a48, roughness: 0.62, envMapIntensity: 0.16,
     }),
-    fabric: std({ map: tex.wool, roughness: 0.95, envMapIntensity: 0.2 }),
-    fabricDark: std({ map: tex.woolDark, roughness: 0.96, envMapIntensity: 0.18 }),
-    leather: std({ map: tex.leather, roughness: 0.72, envMapIntensity: 0.35 }),
-    felt: std({ map: tex.felt, roughness: 1, envMapIntensity: 0.35 }),
-    brass: std({ color: 0xc2a67a, roughness: 0.32, metalness: 1, envMapIntensity: 1.15 }),
-    black: std({ color: 0x12100d, roughness: 0.65, metalness: 0.25 }),
+    fabric: std({ map: tex.wool, roughness: 0.95, envMapIntensity: 0.1 }),
+    fabricDark: std({ map: tex.woolDark, roughness: 0.96, envMapIntensity: 0.09 }),
+    leather: std({ map: tex.leather, roughness: 0.72, envMapIntensity: 0.16 }),
+    felt: std({ map: tex.felt, roughness: 1, envMapIntensity: 0.14 }),
+    brass: std({ color: 0xc2a67a, roughness: 0.32, metalness: 1, envMapIntensity: 0.75 }),
+    black: std({ color: 0x12100d, roughness: 0.65, metalness: 0.25, envMapIntensity: 0.22 }),
     glass: phys({
-      color: 0xfff1dc, transparent: true, opacity: 0.1, roughness: 0.06, metalness: 0,
-      envMapIntensity: 1.2, side: THREE.DoubleSide, depthWrite: false,
+      color: 0xfff1dc, transparent: true, opacity: 0.05, roughness: 0.06, metalness: 0,
+      envMapIntensity: 0.5, side: THREE.DoubleSide, depthWrite: false,
     }),
-    paper: std({ color: 0xe9e2d4, roughness: 0.85 }),
+    paper: std({ color: 0xe9e2d4, roughness: 0.85, envMapIntensity: 0.15 }),
     leaf: std({ color: 0x33482c, roughness: 1 }),
   };
 }

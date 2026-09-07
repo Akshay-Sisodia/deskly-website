@@ -27,14 +27,14 @@ renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 2 : 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 0.78;
+renderer.toneMappingExposure = 0.6;
 renderer.shadowMap.enabled = !isMobile;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.shadowMap.autoUpdate = false;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xece5d9);
-scene.fog = new THREE.FogExp2(0xe9e2d5, 0.005);
+scene.background = new THREE.Color(0x171310);
+scene.fog = new THREE.FogExp2(0x1b1611, 0.006);
 
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
@@ -77,7 +77,7 @@ const cupGeo = new THREE.CylinderGeometry(.042, .034, .09, 12);
 const cofGeo = new THREE.CircleGeometry(.036, 12);
 const penGeo = new THREE.CylinderGeometry(.004, .004, .11, 5);
 const canGeo = new THREE.CylinderGeometry(.065, .065, .025, 10);
-const canMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.12, 1.06, .96) });
+const canMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.8, 1.5, 1.05) });
 function placeCup(x, y, z) {
   const cup = new THREE.Mesh(cupGeo, MAT.paper);
   cup.position.set(x, y, z); scene.add(cup);
@@ -106,10 +106,10 @@ function wallSign(map, w, h, x, y, z, ry = 0) {
    surface lands on the same hue and the rooms read flat. Held near zero in the
    windowless corridor, where cool skylight would be a lie, and ramped up on
    entering the daylit rooms. */
-const bounce = new THREE.HemisphereLight(0xe6e2d8, 0xc4b7a2, 1.25);
+const bounce = new THREE.HemisphereLight(0xbfc6cf, 0x6a5842, .5);
 scene.add(bounce);
-const corridorWash = new THREE.SpotLight(0xfff1de, 26, 16, .9, .85, 1.5);
-corridorWash.position.set(0, 3.1, 16.8); corridorWash.target.position.set(0, 0, 15.2);
+const corridorWash = new THREE.SpotLight(0xfff1de, 30, 20, 1.0, .9, 1.2);
+corridorWash.position.set(0, 3.0, 16.4); corridorWash.target.position.set(0, .9, 12.6);
 scene.add(corridorWash, corridorWash.target);
 const doorSpot = new THREE.SpotLight(0xffe6c8, 0, 22, .65, .55, 1.2);
 doorSpot.position.set(0, 1.4, 10.2); doorSpot.target.position.set(0, 1, 16.5);
@@ -197,7 +197,7 @@ kick.position.set(.8, .12, .056); doorPivot.add(kick);
 [[-2.05, 14.2], [2.05, 14.2], [-2.05, 17.4], [2.05, 17.4]].map(([sx, sz]) => {
   const arm = box(.04, .18, .08, MAT.brass, sx, 2.05, sz, false);
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(.035, 8, 8),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(1.4, 1.34, 1.22) }));
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(2.6, 2.0, 1.25) }));
   bulb.position.set(sx + (sx > 0 ? -.06 : .06), 1.92, sz); scene.add(bulb);
   return arm;
 });
@@ -229,7 +229,7 @@ box(.06, .08, 10.2, MAT.oakDark, 4.84, 1.1, 6.8, false); box(.06, .1, 10.2, MAT.
   inst.castShadow = true; inst.receiveShadow = true; scene.add(inst);
 }
 // cove light strips (HDR — bloom glow lines)
-const coveMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.08, 1.03, .94) });
+const coveMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(1.7, 1.42, 1.0) });
 const stripMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(.62, .55, .46) });
 box(9.6, .05, .08, coveMat, 0, 3.18, 2.35, false);
 box(.08, .05, 9.4, coveMat, -4.8, 3.18, 6.8, false);
@@ -319,7 +319,7 @@ function pendant(x, y, z, r = .24, ceil = 3.24) {
     std({ color: 0x191410, roughness: .5, metalness: .4, side: THREE.DoubleSide }));
   shade.position.set(x, y + .08, z); scene.add(shade);
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(.04, 8, 8),
-    new THREE.MeshBasicMaterial({ color: new THREE.Color(1.5, 1.42, 1.28) }));
+    new THREE.MeshBasicMaterial({ color: new THREE.Color(3.0, 2.3, 1.4) }));
   bulb.position.set(x, y, z); scene.add(bulb);
   const cord = new THREE.Mesh(new THREE.CylinderGeometry(.008, .008, Math.max(.2, ceil - y - .1), 6), MAT.black);
   cord.position.set(x, (ceil + y + .06) / 2, z); scene.add(cord);
@@ -539,9 +539,9 @@ function enableBloom() {
     samples: 4, type: THREE.HalfFloatType,
   }));
   composer.addPass(new RenderPass(scene, camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .06, .6, .98));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .16, .55, .9));
   composer.addPass(new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, uVig: { value: .14 } },
+    uniforms: { tDiffuse: { value: null }, uVig: { value: .32 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
     fragmentShader: `
       uniform sampler2D tDiffuse; uniform float uVig; varying vec2 vUv;
@@ -676,19 +676,15 @@ ScrollTrigger.create({
    dissolve while the first section's gradient rises over them. Scrubbed, so it
    tracks the scroll instead of snapping at the boundary. */
 if (!reduceMotion) {
-  // Two stages. The frame releases while the film is still running...
-  gsap.to('.letterbox', {
-    scaleY: 0, ease: 'power1.inOut',
-    scrollTrigger: { trigger: '#filmRun', start: 'bottom bottom+=70%', end: 'bottom bottom', scrub: true },
+  // The image dissolves under the first section as it rises, so the film and
+  // the document overlap instead of leaving a gap of nothing between them.
+  // A dark film cross-dissolved into bone just mixes values and goes muddy.
+  // Singita's hero is position:static and simply scrolls away, so the film
+  // travels up and out while the page rises over it — a crisp edge, no wash.
+  gsap.to('#stage, .hero-grade', {
+    yPercent: -16, ease: 'none',
+    scrollTrigger: { trigger: '.lede-section', start: 'top bottom', end: 'top top', scrub: true },
   });
-  // ...then the image dissolves under the first section as it rises, so the two
-  // overlap instead of leaving a gap of nothing between them.
-  gsap.timeline({
-    scrollTrigger: { trigger: '.lede-section', start: 'top bottom', end: 'top 30%', scrub: true },
-  })
-    .to('#stage', { opacity: 0, ease: 'power2.inOut' }, 0)
-    .to('.hero-grade', { opacity: 0, ease: 'power2.inOut' }, 0)
-    .to('.grain', { opacity: 0, ease: 'none' }, .3);
 }
 
 /* ================= page: reveals, nav state, smooth anchors ================= */
@@ -800,18 +796,18 @@ function updateDoorAndLights(u, dt) {
     lastLeak = leakCur;
     leak.style.opacity = leakCur.toFixed(3);
   }
-  corridorWash.intensity = 26 * (1 - smoothstep01((u - 0.1) / 0.16));
-  keyA.intensity = 4 + smoothstep01((u - 0.14) / 0.18) * 9;
-  keyB.intensity = 3 + smoothstep01((u - 0.55) / 0.2) * 12;
-  daylight.intensity = 26 + smoothstep01((u - 0.6) / 0.22) * 24;
-  sun.intensity = .9 + smoothstep01((u - 0.72) / 0.18) * 1.2;
-  bounce.intensity = 1.25 + smoothstep01((u - 0.12) / 0.24) * .95;
+  corridorWash.intensity = 20 * (1 - smoothstep01((u - 0.1) / 0.16));
+  keyA.intensity = 7 + smoothstep01((u - 0.14) / 0.18) * 16;
+  keyB.intensity = 5 + smoothstep01((u - 0.55) / 0.2) * 22;
+  daylight.intensity = 14 + smoothstep01((u - 0.6) / 0.22) * 16;
+  sun.intensity = .5 + smoothstep01((u - 0.72) / 0.18) * .8;
+  bounce.intensity = .5 + smoothstep01((u - 0.12) / 0.24) * .5;
   scene.fog.density = .008 - u * .005;
 }
 
 function updateGlassAndScreens(u) {
   const cross = Math.exp(-Math.pow((u - 0.62) * 18, 2));
-  glassL.material.opacity = .08 - cross * .075;
+  glassL.material.opacity = .04 - cross * .038;
   glassL.visible = glassR.visible = cross < .85;
   const gOpen = smoothstep01((u - 0.54) / 0.08) * (1 - smoothstep01((u - 0.78) / 0.1));
   glassPivot.rotation.y = gOpen * 1.75;
@@ -819,7 +815,7 @@ function updateGlassAndScreens(u) {
     lastGOpen = gOpen;
     if (renderer.shadowMap.enabled) renderer.shadowMap.needsUpdate = true;
   }
-  winGlass.material.opacity = .07 + smoothstep01((u - 0.78) / 0.14) * .05;
+  winGlass.material.opacity = .03 + smoothstep01((u - 0.78) / 0.14) * .025;
   screenGlow.intensity = smoothstep01((u - 0.78) / 0.16) * 18;
 }
 

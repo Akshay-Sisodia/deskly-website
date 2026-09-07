@@ -2,7 +2,6 @@
   /* Sampled off the benchmark set: Aman #f3eee7 bone, Aman #313131/#585858 text,
      Rosewood/Soho House near-black buttons. Deliberately no metallic accent. */
   --paper:#f3eee7;
-  --paper-raised:#ece5d9;
   --paper-card:#f9f6f1;
   --ink:#2b2a28;
   --ink-2:rgba(43,42,40,.78);
@@ -12,9 +11,11 @@
   --rule:rgba(43,42,40,.14);
   --rule-strong:rgba(43,42,40,.26);
 
-  /* the film is a daylit room, so it shares the page's ink */
-  --film-ink:var(--ink);
-  --film-ink-2:var(--ink-2);
+  /* Luxury property heroes (Rosewood, Singita, Nihi, Aethos) are all large
+     white type, centred, no shadow, over an atmospheric image — under a light
+     page. The film keeps its own ivory; the document stays bone. */
+  --film-ink:#f7f3ec;
+  --film-ink-2:rgba(247,243,236,.78);
 
   --display:"EB Garamond",Georgia,"Times New Roman",serif;
   --sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -81,12 +82,14 @@ img{display:block;max-width:100%;height:auto}
 /* ---------------- loader ---------------- */
 #loader{position:fixed;inset:0;z-index:100;background:var(--paper);display:grid;place-items:center}
 .brand{display:flex;align-items:center;color:inherit;text-decoration:none}
-.brand-mark{display:block;background:currentColor;
-  -webkit-mask:url("./assets/logo.svg") no-repeat center/contain;
-          mask:url("./assets/logo.svg") no-repeat center/contain}
-.ld-logo{width:min(150px,44vw);aspect-ratio:292/40;color:var(--ink);opacity:.45}
-.nav-mark{width:148px;aspect-ratio:292/40}
-.foot-mark{width:132px;aspect-ratio:292/40;color:var(--ink)}
+.wordmark{font-family:var(--display);font-weight:500;text-transform:uppercase;
+  letter-spacing:.36em;line-height:1;display:block;
+  /* tracking adds space after the last letter; pull it back so the mark
+     optically aligns with the gutter */
+  margin-right:-.36em}
+.nav-word{font-size:1.15rem}
+.foot-word{font-size:1rem;color:var(--ink)}
+.ld-word{font-size:1.35rem;color:var(--ink);opacity:.5}
 
 /* ---------------- nav ---------------- */
 .nav{position:fixed;top:0;left:0;right:0;z-index:40;
@@ -95,68 +98,61 @@ img{display:block;max-width:100%;height:auto}
   padding-top:calc(1rem + env(safe-area-inset-top));
   opacity:0;pointer-events:none;transition:opacity .8s ease .15s,background .4s,border-color .4s}
 body.entered .nav{opacity:1;pointer-events:auto}
-.nav::before{content:"";position:absolute;inset:0;z-index:-1;
-  background:rgba(243,238,231,.86);backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--rule);
-  }
-.nav{color:var(--ink)}
+
+.nav{color:var(--film-ink)}
 .nav-links{display:flex;gap:2rem}
-.nav-links a{color:var(--ink-3);text-decoration:none;font-size:.8125rem;font-weight:500;
+.nav-links a{color:var(--film-ink-2);text-decoration:none;font-size:.8125rem;font-weight:500;
   letter-spacing:.1em;text-transform:uppercase;transition:color .25s}
-.nav-links a:hover,.nav-links a[aria-current="true"]{color:var(--ink)}
+.nav-links a:hover,.nav-links a[aria-current="true"]{color:var(--film-ink)}
+/* past the film the nav sits on paper */
+body.past-film .nav{color:var(--ink)}
+body.past-film .nav-links a{color:var(--ink-3)}
+body.past-film .nav-links a:hover,body.past-film .nav-links a[aria-current="true"]{color:var(--ink)}
 .nav-cta{padding:.62rem 1.15rem;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
+.nav-cta{background:var(--film-ink);color:#191510;border-color:var(--film-ink)}
+.nav-cta img{filter:none}
+.nav-cta:hover{background:#fff;border-color:#fff}
+body.past-film .nav-cta{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+body.past-film .nav-cta:hover{background:var(--accent-soft);border-color:var(--accent-soft)}
 
 
 /* ---------------- hero film ---------------- */
 .hero{position:relative}
 #stage{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0}
 .hero-grade{position:fixed;inset:0;z-index:2;pointer-events:none;
-  background:
-    radial-gradient(ellipse at 50% 46%,transparent 72%,rgba(243,238,231,.2) 100%),
-    linear-gradient(180deg,rgba(243,238,231,.22) 0,transparent 14%,transparent 78%,rgba(243,238,231,.3) 100%)}
+  background:radial-gradient(ellipse at 50% 46%,transparent 46%,rgba(18,14,10,.34) 100%)}
 .grain{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.04;mix-blend-mode:multiply;
   background-image:url("./assets/grain.svg");background-size:260px 260px}
-.letterbox{position:fixed;left:0;right:0;height:0;background:var(--paper);z-index:4;pointer-events:none;
-  transition:height .8s ease}
-.letterbox.top{top:0;transform-origin:50% 0}
-.letterbox.bottom{bottom:0;transform-origin:50% 100%}
-body.entered .letterbox{height:5.5vh}
 .light-leak{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;mix-blend-mode:screen;
   background:radial-gradient(ellipse 58% 38% at 50% 54%,rgba(255,236,206,.5),transparent 72%)}
 
 /* The film's furniture is scrubbed out over the tail of #filmRun (see main.js);
    past-film only kills interaction, since rendering stops there anyway. */
-body.past-film #stage,body.past-film .hero-grade,body.past-film .letterbox{pointer-events:none}
+body.past-film #stage,body.past-film .hero-grade{pointer-events:none}
 
 .film-run{height:340vh;pointer-events:none}
 
 .slate{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;pointer-events:none;
   padding-inline:var(--gutter);opacity:0;visibility:hidden}
-.slate.lower{justify-content:flex-end;padding-bottom:16vh}
-.slate::before{content:"";position:absolute;left:50%;top:50%;translate:-50% -50%;
-  width:min(1100px,110vw);height:70vh;pointer-events:none;
-  background:radial-gradient(ellipse at 50% 50%,rgba(243,238,231,.34) 0,rgba(243,238,231,.2) 34%,
-    rgba(243,238,231,.07) 60%,transparent 84%)}
-.slate.lower::before{top:auto;bottom:-4vh;translate:-50% 0;height:62vh;width:min(1200px,115vw);
-  background:radial-gradient(ellipse at 50% 66%,rgba(243,238,231,.42) 0,rgba(243,238,231,.26) 34%,
-    rgba(243,238,231,.09) 60%,transparent 86%)}
-.slate > *{position:relative}
-.slate h1,.slate h2{text-shadow:0 1px 24px rgba(243,238,231,.9)}
-.slate{color:var(--film-ink)}
-.slate .eyebrow,.slate .eyebrow-accent{color:var(--ink);
-  text-shadow:0 0 14px rgba(243,238,231,1),0 1px 3px rgba(243,238,231,.9)}
+.slate .display-xl{font-size:clamp(2.6rem,5.8vw,5rem);line-height:1.04}
+.slate .display-l{font-size:clamp(2.2rem,4.6vw,3.8rem);line-height:1.06}
+.slate .eyebrow{margin-bottom:1.1rem}
 
-.slate-sub{margin-top:1.5rem;font-size:1rem;letter-spacing:.02em;color:var(--ink-2);
-  text-shadow:0 1px 12px rgba(243,238,231,.95)}
+.slate > *{position:relative}
+.slate{color:var(--film-ink)}
+.slate .display-xl em,.slate .display-l em{color:var(--film-ink)}
+.slate .eyebrow,.slate .eyebrow-accent{color:var(--film-ink-2)}
+
+.slate-sub{margin-top:1.35rem;font-size:1rem;letter-spacing:.02em;color:var(--film-ink-2)}
 .l{display:block;overflow:hidden;padding:0 .1em .1em;margin:0 -.1em -.1em}
 
-.scroll-hint{position:fixed;bottom:calc(8vh + env(safe-area-inset-bottom));left:50%;translate:-50% 0;
+.scroll-hint{position:fixed;bottom:calc(4vh + env(safe-area-inset-bottom));left:50%;translate:-50% 0;
   z-index:6;display:flex;flex-direction:column;align-items:center;gap:.7rem;
   font-size:.625rem;letter-spacing:.3em;text-transform:uppercase;color:var(--film-ink-2);
   opacity:0;transition:opacity .5s}
 body.entered .scroll-hint{opacity:1}
-.scroll-rule{width:1px;height:44px;background:linear-gradient(180deg,transparent,var(--ink));
+.scroll-rule{width:1px;height:30px;background:linear-gradient(180deg,transparent,var(--film-ink));
   animation:drop 2.4s ease-in-out infinite}
 @keyframes drop{0%,100%{transform:scaleY(.35);opacity:.4}50%{transform:scaleY(1);opacity:1}}
 .scroll-rule{transform-origin:top}
@@ -165,18 +161,11 @@ body.entered .scroll-hint{opacity:1}
 main{position:relative;z-index:10}
 .section{padding-block:var(--sec-y);border-top:1px solid var(--rule);background:var(--paper)}
 .section:first-child{border-top:none}
-.section-raised{background:var(--paper-raised)}
 .sec-head{max-width:46rem;margin-bottom:clamp(2.5rem,6vh,4.5rem)}
 .sec-head .room-copy{margin-top:1.4rem}
 
 /* lede */
-.lede-section{
-  padding-top:clamp(6.5rem,20vh,11rem);
-  background:linear-gradient(180deg,
-    rgba(243,238,231,0) 0,
-    rgba(243,238,231,.66) 10vh,
-    rgba(243,238,231,.94) 20vh,
-    var(--paper) 34vh)}
+.lede-section{padding-top:clamp(5rem,12vh,8rem);background:var(--paper)}
 .lede{max-width:38ch;font-size:clamp(1.5rem,2.9vw,2.35rem)}
 .lede-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;
   margin-top:clamp(3rem,7vh,5rem);padding-top:2.25rem;border-top:1px solid var(--rule)}
@@ -296,15 +285,9 @@ main{position:relative;z-index:10}
   .brand img{width:124px}
   .nav-cta{padding:.55rem .9rem;font-size:.6875rem}
   .film-run{height:300vh}
-  body.entered .letterbox{height:3vh}
-  .slate.lower{padding-bottom:20vh}
+  .slate.upper{padding-top:clamp(4rem,9vh,5.5rem)}
+  .slate.upper .display-l{font-size:clamp(1.3rem,5vw,1.75rem)}
   .slate-sub{font-size:.9375rem;margin-top:1.15rem}
-  .slate::before{width:150vw;height:78vh;
-    background:radial-gradient(ellipse at 50% 50%,rgba(243,238,231,.78) 0,rgba(243,238,231,.58) 34%,
-      rgba(243,238,231,.3) 62%,rgba(243,238,231,.08) 80%,transparent 92%)}
-  .slate.lower::before{bottom:-6vh;height:74vh;
-    background:radial-gradient(ellipse at 50% 68%,rgba(243,238,231,.78) 0,rgba(243,238,231,.58) 34%,
-      rgba(243,238,231,.3) 62%,rgba(243,238,231,.08) 80%,transparent 92%)}
   .lede-facts{grid-template-columns:1fr 1fr;gap:1.75rem 1.5rem}
   .spec{gap:1.15rem 1.5rem}
   .f-row{grid-template-columns:1fr}

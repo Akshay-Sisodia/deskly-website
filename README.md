@@ -47,9 +47,19 @@ ship (measured via computed styles, not trend pieces):
   (Aman uses #313131/#585858), near-black accent. Deliberately **no metallic
   accent**: Rosewood, Soho House and Aman all use black or dark grey buttons.
   Every reference site is light and warm; none are dark.
-- The hero film is a **daylit** room, so it shares the page's ink and the nav
-  needs no inversion. `--film-ink*` now alias `--ink*`; keep the indirection so
-  the film can be re-graded independently later.
+- **Hero pattern, measured off the references.** Rosewood, Singita, Nihi and
+  Aethos all run large white type, centred, with *no* text-shadow and no scrim,
+  over an atmospheric image, under a light page. So the film stays a warm
+  lamp-lit interior with its own `--film-ink`, and the document stays bone.
+  Dark ink over a bright render is unwinnable without a scrim — don't retry it.
+- **Nav is transparent and inverts** at `body.past-film`: ivory over the film,
+  ink over the page. Same as Singita/Nihi.
+- **One surface.** No alternating section bands; the hairline rule separates
+  them.
+- **The hero exits by scroll, not crossfade.** Singita's hero is
+  `position:static` and simply scrolls away. Cross-dissolving a dark film into
+  bone mixes values and goes muddy, so the film parallaxes up while the page
+  rises over it — crisp edge, no wash.
 - Relighting for daylight meant: sky-dominant hemisphere bounce, near-neutral
   (not blue) sky so the woods don't read grey, lamps demoted to accents,
   emissive strips and bulbs pulled back near 1.0, bloom to .06 at a .98
@@ -57,8 +67,8 @@ ship (measured via computed styles, not trend pieces):
   of those was a visible source of milkiness.
 - Camera FOV widens in portrait (`fovFor`) — a fixed 50° vertical crops
   horizontally on phones and the door filled the frame.
-- The logo ships ivory-on-dark, so it renders as a CSS mask (`.brand-mark`) and
-  takes its colour from `currentColor` — one file, both nav states.
+- The wordmark is text, not an asset — letterspaced caps in the display face,
+  as Rosewood and Aman do. `assets/logo.svg` is gone.
 
 ## Notes
 
