@@ -714,12 +714,7 @@ if (!reduceMotion) {
   });
 }
 
-/* Nav gets a backdrop once the film is behind us, and marks the section in view. */
-ScrollTrigger.create({
-  start: 'top -60',
-  onUpdate: (s) => document.body.classList.toggle('scrolled', s.scroll() > 60),
-});
-
+/* Nav marks the section in view; its backdrop is driven by .past-film in CSS. */
 const navLinks = [...document.querySelectorAll('.nav-links a')];
 const sectionFor = new Map(
   navLinks.map((a) => [document.querySelector(a.hash), a]).filter(([s]) => s));
@@ -916,7 +911,6 @@ lenis?.start();
 ScrollTrigger.refresh();
 progress = ScrollTrigger.getById('film')?.progress ?? 0;
 smooth = progress;
-document.body.classList.toggle('scrolled', scrollY > 60);
 slateLive = true;
 setSlate(filmLive ? slateForProgress(progress) : -1);
 addEventListener('load', () => ScrollTrigger.refresh());

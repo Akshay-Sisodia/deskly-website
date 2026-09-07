@@ -35,6 +35,23 @@ http://localhost:3000 — serve over HTTP, ES modules block `file://`.
 | `assets/plates/` | Textures painted into the 3D set |
 | `server.cjs` | Dev static server with asset caching |
 
+## Design system
+
+Light theme, benchmarked against what premium hospitality/design sites actually
+ship (measured via computed styles, not trend pieces):
+
+- **Type** — EB Garamond (display) + Manrope (text). Hermès's exact stack; both
+  free. Old-style serifs dominate the reference set — Caslon at Norm Architects,
+  Cardo at Soho House, Lyon at Aman — not didones.
+- **Palette** — `#f3eee7` bone paper (Aman), `#2b2a28` soft charcoal text
+  (Aman uses #313131/#585858), near-black accent. Deliberately **no metallic
+  accent**: Rosewood, Soho House and Aman all use black or dark grey buttons.
+  Every reference site is light and warm; none are dark.
+- The hero film stays a dark room, so `--film-ink*` keeps its type light and the
+  nav inverts past `#filmRun` via `body.past-film`.
+- The logo ships ivory-on-dark, so it renders as a CSS mask (`.brand-mark`) and
+  takes its colour from `currentColor` — one file, both nav states.
+
 ## Notes
 
 - Rooms: Executive 12 @ ₹900/hr · Large Conference 16 @ ₹1,200/hr. Two-hour
