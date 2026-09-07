@@ -1,39 +1,52 @@
-# Deskly — A Room for What's Next
+# Deskly — meeting rooms in Royapettah, Chennai
 
-A continuous scroll-driven cinematic website for **Deskly India** (premium meeting rooms, Royapettah, Chennai). Darkness → doorway → atelier → through glass → big room → screen sign-off → pricing → booking.
+Single-page site for **Deskly India**. A short scroll-driven arrival film over a
+Three.js set, then a normal document: the two rooms, what's included, rates,
+location, and a booking inquiry.
 
 ## Run it
 
 ```bash
-npm start
-# or
-node server.cjs
+npm start   # or: node server.cjs
 ```
 
-Then open http://localhost:3000 and scroll slowly. Serve over HTTP — ES modules block `file://`.
+http://localhost:3000 — serve over HTTP, ES modules block `file://`.
 
 ## Stack
 
-- **Three.js** (architectural set, PBR + RoomEnvironment IBL, baked shadows)
+- **Three.js** for the hero film only (PBR + RoomEnvironment IBL, baked shadows)
+- **EffectComposer**: bloom → split-tone grade → output, on a multisampled
+  target; auto-degrades through three quality tiers on weak GPUs
 - **GSAP ScrollTrigger + Lenis** on one shared RAF loop
-- **EffectComposer**: bloom → warm grade/vignette → output (auto-degrades on weak GPUs)
-- Vector brand, plates, and icons in `assets/` — no build step
+- Native `<select>` / `<input type="date">` / `<input type="time">` — no picker
+  libraries
+- No build step
 
 ## Structure
 
 | Path | What lives here |
 |---|---|
-| `index.html` | Story slates, booking inquiry, chapters, HUD |
-| `styles.css` | Editorial type, film grade, loader |
-| `main.js` | 3D set, camera pacing, doors, finale screen |
-| `js/loader.js` | Real load progress (fonts → textures → first frame) |
-| `js/textures.js` | Procedural materials + SVG cinematic plates |
-| `assets/` | Logo, mark, favicon, icons, screen/art/sky plates |
+| `index.html` | Hero slates, content sections, booking form, LocalBusiness JSON-LD |
+| `styles.css` | Type system, layout, film grade |
+| `main.js` | 3D set, camera path, slate timing, page behaviour, booking |
+| `js/textures.js` | Procedural materials + image/SVG plates |
+| `js/loader.js` | Quiet cover until fonts and textures are ready |
+| `assets/img/` | Room and city photography |
+| `assets/plates/` | Textures painted into the 3D set |
 | `server.cjs` | Dev static server with asset caching |
 
 ## Notes
 
-- Booking is a real inquiry (`mailto:info@deskly.in`) — no fake availability.
-- Executive 12 @ ₹900/hr · Conference 16 @ ₹1,200/hr · min 2 hrs · half day −15% · full day −25%.
-- Honors `prefers-reduced-motion`; mobile gets reduced geometry and no bloom.
-- The loader tracks actual work and only holds long enough for a clean fade-in.
+- Rooms: Executive 12 @ ₹900/hr · Large Conference 16 @ ₹1,200/hr. Two-hour
+  minimum; half day −15%, full day −25%.
+- Booking opens a prefilled `mailto:info@deskly.in` — no fake availability, no
+  backend.
+- The hero film owns `#filmRun` (340vh) and nothing else. Past it the canvas
+  stops rendering entirely.
+- Honours `prefers-reduced-motion`; mobile drops shadows, bloom and dust.
+
+## Content still to confirm
+
+The following are not on the page because we don't have them: opening hours,
+parking, Wi-Fi speed, catering, and the cancellation policy. `assets/img/` is
+AI-generated placeholder photography — replace with real shots of B7 & B8.

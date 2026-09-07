@@ -32,6 +32,7 @@ const server = http.createServer((req, res) => {
     fs.createReadStream(file).pipe(res);
   });
 });
-server.listen(3000, () => {
-  process.stdout.write('Deskly serving at http://localhost:3000\n');
+const PORT = Number(process.env.PORT) || 4173;
+server.listen(PORT, () => {
+  process.stdout.write(`Deskly serving at http://localhost:${PORT}\n`);
 });

@@ -3,22 +3,26 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Deskly — Meeting Rooms in Royapettah, Chennai</title>
-<meta name="description" content="Deskly India offers premium meeting and conference rooms in Royapettah, Chennai. Executive (12 seats) from ₹900/hr and Large Conference (16 seats) from ₹1,200/hr." />
-<meta name="theme-color" content="#0c0a08" />
-<meta property="og:title" content="Deskly — Meeting rooms for focused work" />
-<meta property="og:description" content="Premium meeting and conference rooms in Royapettah, Chennai. Scroll through the space, then reserve a room." />
+<title>Deskly — Meeting &amp; Conference Rooms in Royapettah, Chennai</title>
+<meta name="description" content="Two private meeting rooms in Royapettah, central Chennai. Executive seats 12 from ₹900/hour; Large Conference seats 16 from ₹1,200/hour. Set up before you arrive." />
+<meta name="theme-color" content="#0b0a09" />
+<link rel="canonical" href="https://deskly.in/" />
+
+<meta property="og:title" content="Deskly — Meeting rooms in Royapettah, Chennai" />
+<meta property="og:description" content="Where the real meeting happens. Two private meeting rooms in Royapettah, Chennai — twelve seats or sixteen, from ₹900 an hour." />
 <meta property="og:type" content="website" />
+<meta property="og:locale" content="en_IN" />
+<meta property="og:image" content="./assets/img/room-conference.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+
 <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
 <link rel="apple-touch-icon" href="./assets/mark.svg" />
-<link rel="preload" href="./assets/mark.svg" as="image" type="image/svg+xml" />
+
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="preconnect" href="https://cdn.jsdelivr.net" />
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.css" />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="./styles.css" />
+
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -32,154 +36,363 @@
   <img class="ld-logo" src="./assets/logo.svg" width="160" height="22" alt="" />
 </div>
 
+<a class="skip" href="#rooms">Skip to the rooms</a>
+
 <header class="nav" id="nav">
-  <a class="brand" href="#top" data-scroll-to="0" aria-label="Deskly">
+  <a class="brand" href="#top" aria-label="Deskly — home">
     <img src="./assets/logo.svg" width="148" height="20" alt="Deskly" />
   </a>
   <nav class="nav-links" aria-label="Primary">
-    <a href="#film" data-scroll-to="0.4">The rooms</a>
-    <a href="#film" data-scroll-to="0.8">Conference</a>
-    <a href="#book" data-scroll-to="1">Reserve</a>
+    <a href="#rooms">Rooms</a>
+    <a href="#included">Included</a>
+    <a href="#rates">Rates</a>
+    <a href="#visit">Visit</a>
   </nav>
-  <div class="nav-right">
-    <a href="#book" class="book-pill" data-scroll-to="1">Reserve a room</a>
-  </div>
+  <a href="#reserve" class="btn btn-brass nav-cta">Reserve a room</a>
 </header>
 
-<canvas id="stage" aria-hidden="true"></canvas>
+<!-- ============ hero: the arrival film ============ -->
+<div class="hero" id="top">
+  <canvas id="stage" aria-hidden="true"></canvas>
+  <div class="hero-grade" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="letterbox top" aria-hidden="true"></div>
+  <div class="letterbox bottom" aria-hidden="true"></div>
+  <div class="light-leak" id="lightLeak" aria-hidden="true"></div>
 
-<div class="vignette" aria-hidden="true"></div>
-<div class="grain" aria-hidden="true"></div>
-<div class="letterbox top" aria-hidden="true"></div>
-<div class="letterbox bottom" aria-hidden="true"></div>
-<div class="light-leak" id="lightLeak" aria-hidden="true"></div>
-<div class="end-veil" aria-hidden="true"></div>
+  <div class="film-run" id="filmRun" aria-hidden="true"></div>
 
-<nav class="chapters" id="chapters" aria-label="Chapters">
-  <button data-goto="0"><i></i><span>Arrival</span></button>
-  <button data-goto="0.2"><i></i><span>Threshold</span></button>
-  <button data-goto="0.4"><i></i><span>Executive</span></button>
-  <button data-goto="0.6"><i></i><span>Through</span></button>
-  <button data-goto="0.8"><i></i><span>Conference</span></button>
-  <button data-goto="1"><i></i><span>Reserve</span></button>
-</nav>
+  <div class="slate" data-slate="0">
+    <p class="eyebrow">Royapettah · Chennai</p>
+    <h1 class="display-xl">
+      <span class="l">Where the real</span>
+      <span class="l"><em>meeting happens.</em></span>
+    </h1>
+    <p class="slate-sub">Two private rooms. Twelve seats or sixteen. From ₹900 an hour.</p>
+  </div>
 
-<div class="scroll-hint" id="scrollHint" aria-hidden="true">
-  <img class="scroll-ico" src="./assets/icons/scroll.svg" width="18" height="30" alt="" />
-  <span class="scroll-txt">Scroll</span>
-</div>
+  <div class="slate lower" data-slate="1">
+    <p class="eyebrow eyebrow-brass">Executive · 12 seats</p>
+    <h2 class="display-l">
+      <span class="l">Close enough</span>
+      <span class="l"><em>to hear a pause.</em></span>
+    </h2>
+  </div>
 
-<div class="scrub" id="scrub" role="slider" aria-label="Film timeline" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-  <div class="scrub-track" id="scrubTrack">
-    <span class="scrub-fill" id="scrubFill"></span>
-    <span class="scrub-head" id="scrubHead"></span>
-    <div class="scrub-ticks" id="scrubTicks"></div>
+  <div class="slate lower" data-slate="2">
+    <p class="eyebrow eyebrow-brass">Large conference · 16 seats</p>
+    <h2 class="display-l">
+      <span class="l">Sixteen seats.</span>
+      <span class="l"><em>One long table.</em></span>
+    </h2>
+  </div>
+
+  <div class="scroll-hint" id="scrollHint" aria-hidden="true">
+    <span class="scroll-rule"></span>
+    <span>Scroll</span>
   </div>
 </div>
 
-<main id="film">
-  <div class="track" id="track" aria-label="A scroll-driven walk through Deskly">
-    <div class="film-run" aria-hidden="true"></div>
+<main>
 
-    <div class="moment">
-      <p class="kicker">Royapettah · Chennai</p>
-      <h1 class="whisper split"><span class="l">The quiet hour</span><span class="l"><em>before the day begins.</em></span></h1>
+<!-- ============ the offer, stated plainly ============ -->
+<section class="section lede-section" aria-labelledby="lede-h">
+  <div class="wrap">
+    <p class="eyebrow">The short version</p>
+    <h2 class="display-m lede" id="lede-h">
+      Two private rooms in Bhattad Towers, Royapettah. Set up before you
+      arrive. Quiet while you're in them. Yours for the whole block — by the
+      hour, the half day, or the day.
+    </h2>
+    <div class="lede-facts">
+      <div><span class="fact-n">2</span><span class="fact-l">Private rooms</span></div>
+      <div><span class="fact-n">12 &amp; 16</span><span class="fact-l">Seats</span></div>
+      <div><span class="fact-n">₹900</span><span class="fact-l">From, per hour</span></div>
+      <div><span class="fact-n">2 hrs</span><span class="fact-l">Minimum booking</span></div>
     </div>
+  </div>
+</section>
 
-    <div class="moment">
-      <p class="kicker">Threshold</p>
-      <h2 class="title split"><span class="l">Leave the city</span><span class="l"><em>at the door.</em></span></h2>
-    </div>
+<!-- ============ the rooms ============ -->
+<section class="section" id="rooms" aria-labelledby="rooms-h">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">The rooms</p>
+      <h2 class="display-l" id="rooms-h">Two rooms, <em>sized to the conversation.</em></h2>
+    </header>
 
-    <div class="moment lower">
-      <p class="kicker kicker-brass">Executive room</p>
-      <h2 class="serif-xl split"><span class="l">A table made</span><span class="l"><em>for clear thinking.</em></span></h2>
-      <p class="sub fade-line">Twelve seats. Oak. Soft morning light.</p>
-    </div>
-
-    <div class="moment lower">
-      <h2 class="serif-lg split"><span class="l">Quiet enough to hear</span><span class="l"><em>a decision take shape.</em></span></h2>
-    </div>
-
-    <div class="moment lower">
-      <p class="kicker">Through the glass</p>
-      <h2 class="serif-md split"><span class="l">Then the</span><span class="l"><em>larger room.</em></span></h2>
-    </div>
-
-    <div class="moment lower">
-      <p class="kicker kicker-brass">Large conference</p>
-      <h2 class="serif-xl split"><span class="l">Sixteen seats.</span><span class="l"><em>One conversation.</em></span></h2>
-      <div class="spec-row fade-line">
-        <span>From ₹1,200 / hour</span><i></i><span>Royapettah</span>
-      </div>
-    </div>
-
-    <div class="moment m-book" id="book">
-      <div class="book-card" role="dialog" aria-label="Reserve a room">
-        <p class="kicker kicker-brass">Reserve</p>
-        <h2 class="serif-md split"><span class="l">Book the room</span><span class="l"><em>for your next meeting.</em></span></h2>
-        <form id="bookForm">
-          <div class="f-row">
-            <label>Room
-              <select name="room" id="bookRoom" required autocomplete="off">
-                <option value="Executive Meeting Room — 12 seats — ₹900/hr">Executive — 12 seats — ₹900/hr</option>
-                <option value="Large Conference Room — 16 seats — ₹1200/hr" selected>Large Conference — 16 seats — ₹1,200/hr</option>
-              </select>
-            </label>
-            <label>Date
-              <input type="text" name="date" id="bookDate" placeholder="Select a date" required autocomplete="off" inputmode="none" />
-            </label>
-          </div>
-          <div class="f-row">
-            <label>Time
-              <input type="text" name="time" id="bookTime" placeholder="Select a time" required autocomplete="off" inputmode="none" />
-            </label>
-            <label>Duration
-              <select name="dur" id="bookDur" required autocomplete="off">
-                <option value="2 hours" selected>2 hours</option>
-                <option value="Half day — 15% off">Half day — 15% off</option>
-                <option value="Full day — 25% off">Full day — 25% off</option>
-              </select>
-            </label>
-          </div>
-          <label>Email <input type="email" name="email" id="bookEmail" placeholder="you@company.com" required autocomplete="email" /></label>
-          <button type="submit" class="book-cta">
-            Send booking request
-            <img src="./assets/icons/arrow.svg" width="18" height="18" alt="" />
-          </button>
-          <p class="fine" id="bookFine">This sends a real inquiry to Deskly. We reply within two working hours.</p>
-        </form>
-        <div class="book-alt">
-          <a href="mailto:info@deskly.in?subject=Room%20inquiry%20%E2%80%94%20Deskly%20Chennai">
-            <img src="./assets/icons/mail.svg" width="14" height="14" alt="" />info@deskly.in
-          </a>
-          <span>·</span>
-          <a href="tel:+919894550300">
-            <img src="./assets/icons/phone.svg" width="14" height="14" alt="" />+91 98945 50300
-          </a>
-        </div>
-        <p class="book-addr">
-          <img src="./assets/icons/pin.svg" width="14" height="14" alt="" />
-          B7 &amp; B8, Bhattad Towers, Indira Garden, Royapettah, Chennai 600014
+    <article class="room">
+      <figure class="room-img">
+        <img src="./assets/img/room-executive.jpg" width="516" height="516" loading="lazy" decoding="async"
+             alt="The Executive room's table, set with a water carafe and glasses, ringed by soft armchairs." />
+      </figure>
+      <div class="room-body">
+        <p class="eyebrow eyebrow-brass">Executive</p>
+        <h3 class="display-m">The Executive Room</h3>
+        <p class="room-copy">
+          Twelve seats, built for quiet. Board reviews, hiring days, the
+          conversation better had in person. Close enough that nobody raises
+          their voice.
         </p>
+        <dl class="spec">
+          <div><dt>Seats</dt><dd>12</dd></div>
+          <div><dt>Rate</dt><dd>₹900 / hour</dd></div>
+          <div><dt>Minimum</dt><dd>2 hours</dd></div>
+          <div><dt>Best for</dt><dd>Boards, reviews</dd></div>
+        </dl>
+        <a class="btn btn-outline" href="#reserve" data-room="executive">
+          Reserve the Executive
+          <img src="./assets/icons/arrow.svg" width="16" height="16" alt="" />
+        </a>
       </div>
-      <a class="replay" href="#top" data-scroll-to="0">
-        <img src="./assets/icons/replay.svg" width="14" height="14" alt="" />
-        Start the walk again
-      </a>
-      <div class="book-foot" aria-hidden="true"></div>
+    </article>
+
+    <article class="room room-flip">
+      <figure class="room-img">
+        <img src="./assets/img/room-conference.jpg" width="518" height="490" loading="lazy" decoding="async"
+             alt="The Large Conference room seen through its glass wall: a long table, mesh chairs, a pendant light and a city view." />
+      </figure>
+      <div class="room-body">
+        <p class="eyebrow eyebrow-brass">Large conference</p>
+        <h3 class="display-m">The Large Conference Room</h3>
+        <p class="room-copy">
+          Sixteen seats, one table, windows on the city. For the days that need
+          everyone in the room — offsites, training, the presentation you only
+          get to give once.
+        </p>
+        <dl class="spec">
+          <div><dt>Seats</dt><dd>16</dd></div>
+          <div><dt>Rate</dt><dd>₹1,200 / hour</dd></div>
+          <div><dt>Minimum</dt><dd>2 hours</dd></div>
+          <div><dt>Best for</dt><dd>Offsites, presentations</dd></div>
+        </dl>
+        <a class="btn btn-outline" href="#reserve" data-room="conference">
+          Reserve the Conference
+          <img src="./assets/icons/arrow.svg" width="16" height="16" alt="" />
+        </a>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ included ============ -->
+<section class="section section-raised" id="included" aria-labelledby="included-h">
+  <div class="wrap included-grid">
+    <div class="included-copy">
+      <p class="eyebrow">Included</p>
+      <h2 class="display-l" id="included-h">In every booking, <em>no line items.</em></h2>
+      <p class="room-copy">
+        The rate is the rate. The room's yours for the whole block, set up and
+        waiting.
+      </p>
+      <ul class="ticks">
+        <li>Yours alone, the full block</li>
+        <li>Wi-Fi</li>
+        <li>Water on the table</li>
+        <li>Whiteboard and markers</li>
+        <li>Wall display</li>
+        <li>Set up before you arrive</li>
+      </ul>
+    </div>
+    <figure class="included-img">
+      <img src="./assets/img/detail-desk.jpg" width="534" height="466" loading="lazy" decoding="async"
+           alt="Late afternoon light across a wooden desk with a laptop, a brass lamp and a cup of coffee." />
+    </figure>
+  </div>
+</section>
+
+<!-- ============ rates ============ -->
+<section class="section" id="rates" aria-labelledby="rates-h">
+  <div class="wrap">
+    <header class="sec-head">
+      <p class="eyebrow">Rates</p>
+      <h2 class="display-l" id="rates-h">Priced by the hour. <em>Cheaper by the day.</em></h2>
+    </header>
+
+    <div class="rates-table" role="table" aria-label="Room rates">
+      <div class="rt-head" role="row">
+        <span role="columnheader">Room</span>
+        <span role="columnheader">Per hour</span>
+        <span role="columnheader">Half day</span>
+        <span role="columnheader">Full day</span>
+      </div>
+      <div class="rt-row" role="row">
+        <span role="cell" data-th="Room"><strong>Executive</strong><i>12 seats</i></span>
+        <span role="cell" data-th="Per hour">₹900</span>
+        <span role="cell" data-th="Half day">−15%</span>
+        <span role="cell" data-th="Full day">−25%</span>
+      </div>
+      <div class="rt-row" role="row">
+        <span role="cell" data-th="Room"><strong>Large Conference</strong><i>16 seats</i></span>
+        <span role="cell" data-th="Per hour">₹1,200</span>
+        <span role="cell" data-th="Half day">−15%</span>
+        <span role="cell" data-th="Full day">−25%</span>
+      </div>
     </div>
 
+    <ul class="notes">
+      <li>Two-hour minimum on every booking.</li>
+      <li>Half day takes 15% off. Full day, 25%.</li>
+      <li>Confirmed by reply, within two working hours.</li>
+    </ul>
   </div>
+</section>
+
+<!-- ============ visit ============ -->
+<section class="section section-raised" id="visit" aria-labelledby="visit-h">
+  <div class="wrap visit-grid">
+    <div>
+      <p class="eyebrow">Visit</p>
+      <h2 class="display-l" id="visit-h">Royapettah, <em>central Chennai.</em></h2>
+      <address class="visit-addr">
+        B7 &amp; B8, Bhattad Towers<br />
+        Indira Garden, Royapettah<br />
+        Chennai 600014
+      </address>
+      <div class="visit-links">
+        <a class="btn btn-outline" href="https://maps.google.com/?q=Bhattad+Towers+Indira+Garden+Royapettah+Chennai+600014" target="_blank" rel="noopener">
+          <img src="./assets/icons/pin.svg" width="16" height="16" alt="" />
+          Open in Maps
+        </a>
+        <a class="link-brass" href="tel:+919894550300">
+          <img src="./assets/icons/phone.svg" width="14" height="14" alt="" />+91 98945 50300
+        </a>
+        <a class="link-brass" href="mailto:info@deskly.in">
+          <img src="./assets/icons/mail.svg" width="14" height="14" alt="" />info@deskly.in
+        </a>
+      </div>
+    </div>
+    <figure class="visit-img">
+      <img src="./assets/img/city.jpg" width="1060" height="700" loading="lazy" decoding="async"
+           alt="Chennai rooftops at sunset, low sun over the skyline." />
+      <figcaption>The view west, late afternoon.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ============ reserve ============ -->
+<section class="section" id="reserve" aria-labelledby="reserve-h">
+  <div class="wrap reserve-wrap">
+    <header class="sec-head">
+      <p class="eyebrow eyebrow-brass">Reserve</p>
+      <h2 class="display-l" id="reserve-h">Tell us when. <em>We'll confirm.</em></h2>
+      <p class="room-copy">
+        Opens an email with your details already in it. No account, no card, no
+        deposit. We reply within two working hours.
+      </p>
+    </header>
+
+    <form id="bookForm" novalidate>
+      <div class="f-row">
+        <label><span class="lbl">Room</span>
+          <select name="room" id="bookRoom" required>
+            <option value="Executive Meeting Room — 12 seats — ₹900/hr">Executive — 12 seats — ₹900/hr</option>
+            <option value="Large Conference Room — 16 seats — ₹1,200/hr" selected>Large Conference — 16 seats — ₹1,200/hr</option>
+          </select>
+        </label>
+        <label><span class="lbl">Date</span>
+          <input type="date" name="date" id="bookDate" required />
+        </label>
+      </div>
+      <div class="f-row">
+        <label><span class="lbl">Start time</span>
+          <input type="time" name="time" id="bookTime" step="900" value="10:00" required />
+        </label>
+        <label><span class="lbl">Duration</span>
+          <select name="dur" id="bookDur" required>
+            <option value="2 hours" selected>2 hours</option>
+            <option value="3 hours">3 hours</option>
+            <option value="4 hours">4 hours</option>
+            <option value="Half day (−15%)">Half day (−15%)</option>
+            <option value="Full day (−25%)">Full day (−25%)</option>
+          </select>
+        </label>
+      </div>
+      <div class="f-row">
+        <label><span class="lbl">Your email</span>
+          <input type="email" name="email" id="bookEmail" placeholder="you@company.com" required autocomplete="email" />
+        </label>
+        <label><span class="lbl">People <span class="opt">optional</span></span>
+          <input type="number" name="people" id="bookPeople" min="1" max="16" placeholder="8" />
+        </label>
+      </div>
+      <label><span class="lbl">Anything we should set up? <span class="opt">optional</span></span>
+        <textarea name="notes" id="bookNotes" rows="3" placeholder="Screen share, extra chairs, a particular seating layout…"></textarea>
+      </label>
+
+      <button type="submit" class="btn btn-brass btn-block">
+        Send booking request
+        <img src="./assets/icons/arrow.svg" width="18" height="18" alt="" />
+      </button>
+      <p class="fine" id="bookFine" role="status">We reply within two working hours.</p>
+    </form>
+  </div>
+</section>
+
 </main>
 
-<noscript><p class="noscript">Deskly — premium meeting rooms in Chennai. Email info@deskly.in to book.</p></noscript>
+<footer class="foot">
+  <div class="wrap foot-grid">
+    <div>
+      <img class="foot-mark" src="./assets/logo.svg" width="132" height="18" alt="Deskly" />
+      <p class="foot-note">Meeting and conference rooms in Royapettah, Chennai.</p>
+    </div>
+    <nav aria-label="Footer">
+      <a href="#rooms">Rooms</a>
+      <a href="#included">Included</a>
+      <a href="#rates">Rates</a>
+      <a href="#visit">Visit</a>
+      <a href="#reserve">Reserve</a>
+    </nav>
+    <div class="foot-contact">
+      <a href="mailto:info@deskly.in">info@deskly.in</a>
+      <a href="tel:+919894550300">+91 98945 50300</a>
+      <p>B7 &amp; B8, Bhattad Towers, Indira Garden,<br />Royapettah, Chennai 600014</p>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "Deskly",
+  "description": "Private meeting and conference rooms in Royapettah, Chennai.",
+  "url": "https://deskly.in/",
+  "email": "info@deskly.in",
+  "telephone": "+91-98945-50300",
+  "image": "https://deskly.in/assets/img/room-conference.jpg",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "B7 & B8, Bhattad Towers, Indira Garden, Royapettah",
+    "addressLocality": "Chennai",
+    "postalCode": "600014",
+    "addressRegion": "Tamil Nadu",
+    "addressCountry": "IN"
+  },
+  "priceRange": "₹900–₹1,200 per hour",
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "name": "Executive Meeting Room — 12 seats",
+      "price": "900",
+      "priceCurrency": "INR",
+      "eligibleDuration": { "@type": "QuantitativeValue", "minValue": 2, "unitCode": "HUR" }
+    },
+    {
+      "@type": "Offer",
+      "name": "Large Conference Room — 16 seats",
+      "price": "1200",
+      "priceCurrency": "INR",
+      "eligibleDuration": { "@type": "QuantitativeValue", "minValue": 2, "unitCode": "HUR" }
+    }
+  ]
+}
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.20/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
 <script type="module" src="./main.js"></script>
 </body>
 </html>

@@ -76,10 +76,6 @@ async function imageToTexture(url, w, h, { crisp = false } = {}) {
   return t;
 }
 
-async function svgToTexture(url, w, h, opts) {
-  return imageToTexture(url, w, h, opts);
-}
-
 /** Wide-plank white oak — boards, pores, knots, soft wear. */
 function oak(w, h) {
   return canvasTex((g) => {
@@ -386,19 +382,17 @@ export function createMaterials(tex) {
   };
 }
 
-export async function createTextures(hi, load) {
+export async function createTextures(hi) {
   const size = hi ? 512 : 384;
   const plates = hi
     ? { sky: [2048, 1152], screen: [1920, 1080], board: [768, 432], art: [384, 480], plaque: [512, 128] }
     : { sky: [1280, 720], screen: [1280, 720], board: [512, 288], art: [256, 320], plaque: [384, 96] };
 
-  await load.mark(18, 'Building oak floors');
   const oakTex = oak(size, size);
   const oakRoughTex = oakRough(size, size);
   oakTex.repeat.set(3.2, 3.2);
   oakRoughTex.repeat.set(3.2, 3.2);
 
-  await load.mark(30, 'Finishing the walls');
   const plasterTex = plaster(size, size);
   const plasterRoughTex = plasterRough(256, 256);
   plasterTex.repeat.set(2.4, 2.4);
@@ -406,7 +400,6 @@ export async function createTextures(hi, load) {
   const darkPlasterTex = darkPlaster(size, size);
   darkPlasterTex.repeat.set(1.8, 1.8);
 
-  await load.mark(42, 'Setting the chairs');
   const woolTex = wool(256, 256);
   const woolDarkTex = wool(256, 256, { fill: '#3a342e', step: 7, seed: 9, diagonal: false });
   woolTex.repeat.set(2, 2);
@@ -414,9 +407,7 @@ export async function createTextures(hi, load) {
   const feltTex = felt(256, 256);
   feltTex.repeat.set(3, 3);
 
-  const plated = await loadPlates(load, plates);
-  await load.mark(86, 'Opening the rooms');
-
+  const plated = await loadPlates(plates);
   return {
     oak: oakTex,
     oakRough: oakRoughTex,
@@ -434,18 +425,14 @@ export async function createTextures(hi, load) {
   };
 }
 
-async function loadPlates(load, plates) {
-  await load.mark(54, 'Lighting the city');
-  const sky = await imageToTexture('./assets/plates/city-golden-hour.png', plates.sky[0], plates.sky[1]);
-  await load.mark(64, 'Hanging the boards');
-  const art = await svgToTexture('./assets/plates/art.svg', plates.art[0], plates.art[1]);
-  const board = await svgToTexture('./assets/plates/whiteboard.svg', plates.board[0], plates.board[1]);
-  const plaque = await svgToTexture('./assets/plates/plaque.svg', plates.plaque[0], plates.plaque[1]);
-  const plaqueB = await svgToTexture('./assets/plates/plaque-b.svg', plates.plaque[0], plates.plaque[1]);
-  const clock = await svgToTexture('./assets/plates/clock.svg', 256, 256);
-  const notepad = await svgToTexture('./assets/plates/notepad.svg', 512, 384);
-  await load.mark(76, 'Warming the display');
-  const screen = await svgToTexture('./assets/plates/screen-work.svg', plates.screen[0], plates.screen[1], { crisp: true });
-  const logo = await imageToTexture('./assets/plates/deskly-brand-spaces.png', plates.screen[0], plates.screen[1], { crisp: true });
-  return { sky, art, board, plaque, plaqueB, clock, notepad, screen, logo };
+async function loadPlates(plates) {
+  const sky = await imageToTexture('./assets/img/city.jpg', plates.sky[0], plates.sky[1]);
+  const art = await imageToTexture('./assets/plates/art.svg', plates.art[0], plates.art[1]);
+  const board = await imageToTexture('./assets/plates/whiteboard.svg', plates.board[0], plates.board[1]);
+  const plaque = await imageToTexture('./assets/plates/plaque.svg', plates.plaque[0], plates.plaque[1]);
+  const plaqueB = await imageToTexture('./assets/plates/plaque-b.svg', plates.plaque[0], plates.plaque[1]);
+  const clock = await imageToTexture('./assets/plates/clock.svg', 256, 256);
+  const notepad = await imageToTexture('./assets/plates/notepad.svg', 512, 384);
+  const screen = await imageToTexture('./assets/plates/screen-work.svg', plates.screen[0], plates.screen[1], { crisp: true });
+  return { sky, art, board, plaque, plaqueB, clock, notepad, screen };
 }

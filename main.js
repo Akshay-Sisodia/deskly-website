@@ -15,20 +15,19 @@ const isMobile = matchMedia('(max-width: 768px)').matches;
 const HI = !isMobile && !reduceMotion;
 let progress = 0, smooth = 0, time = 0, lastDoorP = -1, leakCur = 0;
 let TIER = isMobile ? 2 : 1, autoQ = true, fAcc = 0, fN = 0, fChecks = 0, lastGOpen = -1;
-let dragging = false;
 const load = createCinematicLoader();
 await load.fonts();
 
 /* ================= renderer / scene ================= */
 const renderer = new THREE.WebGLRenderer({
-  canvas, antialias: false, powerPreference: 'high-performance',
+  canvas, antialias: true, powerPreference: 'high-performance',
   stencil: false, depth: true, alpha: false,
 });
-renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1 : 1.15));
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 2 : 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.08;
+renderer.toneMappingExposure = 0.92;
 renderer.shadowMap.enabled = !isMobile;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.shadowMap.autoUpdate = false;
@@ -42,7 +41,7 @@ scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
 const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.12, 120);
 
-const TEX = await createTextures(HI, load);
+const TEX = await createTextures(HI);
 const MAT = createMaterials(TEX);
 const { rug: rugTex, sky: skyTex, glow: glowTex, shadow: shadowTex } = TEX;
 const phys = (o) => new THREE.MeshPhysicalMaterial(o);
@@ -102,7 +101,12 @@ function wallSign(map, w, h, x, y, z, ry = 0) {
 }
 
 /* ================= lights ================= */
-scene.add(new THREE.HemisphereLight(0x8a7a63, 0x1e130c, .45));
+/* Cool sky bounce against warm ground bounce. Without the cool side every
+   surface lands on the same hue and the rooms read flat. Held near zero in the
+   windowless corridor, where cool skylight would be a lie, and ramped up on
+   entering the daylit rooms. */
+const bounce = new THREE.HemisphereLight(0x6d7c8c, 0x241608, .08);
+scene.add(bounce);
 const doorSpot = new THREE.SpotLight(0xffb46b, 0, 22, .65, .55, 1.2);
 doorSpot.position.set(0, 1.4, 10.2); doorSpot.target.position.set(0, 1, 16.5);
 scene.add(doorSpot, doorSpot.target);
@@ -301,17 +305,18 @@ function chair(x, z, ry, mat) {
   });
   scene.add(g); return g;
 }
-[...Array(4)].map((_, i) => {
-  chair(-1.5 + i * 1.0, 6.05, 0, MAT.fabric);
-  chair(-1.5 + i * 1.0, 7.95, Math.PI, MAT.fabric);
-});
+/* Twelve seats — five down each side, one at each end. The page quotes twelve,
+   so the room shows twelve. Seats are listed as [x, z, rotY] and the cushions
+   come off the same list, so a count can't drift out of sync again. */
+const SEATS_A = [
+  ...[-1.8, -.9, 0, .9, 1.8].flatMap((x) => [[x, 6.05, 0], [x, 7.95, Math.PI]]),
+  [-2.75, 7, Math.PI / 2], [2.75, 7, -Math.PI / 2],
+];
+SEATS_A.forEach(([x, z, ry]) => chair(x, z, ry, MAT.fabric));
 const padGeo = new RoundedBoxGeometry(.46, .035, .46, 3, .012);
-[-1.5, -.5, .5, 1.5].map((x) => {
-  const a = new THREE.Mesh(padGeo, MAT.paper);
-  a.position.set(x, .54, 6.05); scene.add(a);
-  const b = new THREE.Mesh(padGeo, MAT.paper);
-  b.position.set(x, .54, 7.95); scene.add(b);
-  return a;
+SEATS_A.forEach(([x, z]) => {
+  const pad = new THREE.Mesh(padGeo, MAT.paper);
+  pad.position.set(x, .54, z); scene.add(pad);
 });
 function pendant(x, y, z, r = .24, ceil = 3.24) {
   const shade = new THREE.Mesh(new THREE.CylinderGeometry(r * .2, r, .22, 12, 1, true),
@@ -344,22 +349,23 @@ pendant(-.75, 2.1, 7); pendant(.75, 2.1, 7);
 }
 
 /* ================= glass transition wall ================= */
-const glassWallMat = MAT.glass;
-const glassL = new THREE.Mesh(new THREE.PlaneGeometry(4.5, 3.2), glassWallMat);
+const glassL = new THREE.Mesh(new THREE.PlaneGeometry(4.5, 3.2), MAT.glass);
 glassL.position.set(-2.75, 1.6, 2); scene.add(glassL);
 const glassR = glassL.clone(); glassR.position.x = 2.75; scene.add(glassR);
 [-5, -3, -1, 1, 3, 5].map((x) => box(.1, 3.2, .12, MAT.black, x, 1.6, 2));
 box(10, .1, .12, MAT.black, 0, 3.15, 2);
 box(4.45, .1, .12, MAT.black, -2.775, .06, 2); box(4.45, .1, .12, MAT.black, 2.775, .06, 2);
 box(10, .025, .09, MAT.brass, 0, .008, 2.25, false); // threshold strip hides the floor seam
-// glass door on hinge — opens ahead of you, closes behind you
-box(.09, 2.62, .14, MAT.black, -.55, 1.36, 2);
-box(.09, 2.62, .14, MAT.black, .55, 1.36, 2);
+/* Glass door on hinge — full height, jamb to head rail, so there's no stub of
+   transom above it. Wall glass spans y 0..3.2 and the head rail sits at 3.10,
+   so the leaf tops out just under that. */
+box(.09, 3.05, .14, MAT.black, -.55, 1.575, 2);
+box(.09, 3.05, .14, MAT.black, .55, 1.575, 2);
 const glassPivot = new THREE.Group(); glassPivot.position.set(-.5, 0, 2); scene.add(glassPivot);
-const glassPanel = new THREE.Mesh(new RoundedBoxGeometry(1, 2.5, .04, 3, .012), MAT.glass.clone());
-glassPanel.position.set(.5, 1.31, 0); glassPanel.castShadow = true; glassPivot.add(glassPanel);
+const glassPanel = new THREE.Mesh(new RoundedBoxGeometry(1, 3.02, .04, 3, .012), MAT.glass.clone());
+glassPanel.position.set(.5, 1.57, 0); glassPanel.castShadow = true; glassPivot.add(glassPanel);
 const railT = new THREE.Mesh(new RoundedBoxGeometry(1, .09, .07, 3, .014), MAT.black);
-railT.position.set(.5, 2.52, 0); glassPivot.add(railT);
+railT.position.set(.5, 3.035, 0); glassPivot.add(railT);
 const railB = railT.clone(); railB.position.y = .1; glassPivot.add(railB);
 const pullSt1 = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .05, 8), MAT.brass);
 pullSt1.rotation.x = Math.PI / 2; pullSt1.position.set(.82, 1.7, .045); glassPivot.add(pullSt1);
@@ -409,19 +415,19 @@ wallSign(TEX.clock, .42, .42, 5.86, 2.35, -2.2, -Math.PI / 2);
 placeCans([[-3.2, -2.2], [0, -2.2], [3.2, -2.2], [-3.2, -7.8], [0, -7.8], [3.2, -7.8]], 3.42);
 box(11.6, .12, .28, MAT.oakDark, 0, .06, 1.85);
 contactShadow(0, -5, 7.4, 3.4, .6); lightPool(0, -5, 7, 3.2, 0xffbe78, .13);
-[...Array(4)].map((_, i) => {
-  rbox(.34, .025, .26, .006, MAT.paper, -1.8 + i * 1.2, .9, -4.55);
+[-2.4, -.8, .8, 2.4].forEach((x) => {
+  rbox(.34, .025, .26, .006, MAT.paper, x, .9, -4.55);
   const lined = new THREE.Mesh(new THREE.PlaneGeometry(.3, .22), std({ map: TEX.notepad, roughness: .82 }));
-  lined.rotation.x = -Math.PI / 2; lined.position.set(-1.8 + i * 1.2, .918, -4.55); scene.add(lined);
-  return lined;
+  lined.rotation.x = -Math.PI / 2; lined.position.set(x, .918, -4.55); scene.add(lined);
 });
-[...Array(5)].map((_, i) => {
-  chair(-2.4 + i * 1.2, -3.7, Math.PI, MAT.fabricDark);
-  chair(-2.4 + i * 1.2, -6.3, 0, MAT.fabricDark);
-});
+/* Sixteen seats — seven down each side, one at each end. */
+const SEATS_B = [
+  ...[-2.4, -1.6, -.8, 0, .8, 1.6, 2.4].flatMap((x) => [[x, -3.7, Math.PI], [x, -6.3, 0]]),
+  [-3.45, -5, Math.PI / 2], [3.45, -5, -Math.PI / 2],
+];
+SEATS_B.forEach(([x, z, ry]) => chair(x, z, ry, MAT.fabricDark));
 [...Array(3)].map((_, i) => pendant(-2 + i * 2, 2.3, -5, .26, 3.38));
 // display + whiteboard + art + credenza
-let logoMat = null;
 {
   const bezel = new THREE.Mesh(new RoundedBoxGeometry(.12, 1.36, 2.9, 4, .04),
     std({ color: 0x0a0c10, roughness: .28, metalness: .35 }));
@@ -429,10 +435,6 @@ let logoMat = null;
   const img = new THREE.Mesh(new THREE.PlaneGeometry(2.62, 1.12),
     new THREE.MeshBasicMaterial({ map: TEX.screen, toneMapped: false }));
   img.rotation.y = Math.PI / 2; img.position.set(-5.855, 1.85, -5); scene.add(img);
-  // Quiet brand plate only — no finale takeover; the form owns the end chapter
-  logoMat = new THREE.MeshBasicMaterial({ map: TEX.logo, transparent: true, opacity: 0, fog: false, toneMapped: false });
-  const logoPlane = new THREE.Mesh(new THREE.PlaneGeometry(2.62, 1.12), logoMat);
-  logoPlane.rotation.y = Math.PI / 2; logoPlane.position.set(-5.85, 1.85, -5); scene.add(logoPlane);
   box(.05, .5, .3, MAT.brass, -5.85, 1, -5, false);
   const wb = new THREE.Mesh(new THREE.PlaneGeometry(2.7, 1.5), std({ map: TEX.board, roughness: .25, envMapIntensity: .8 }));
   wb.rotation.y = -Math.PI / 2; wb.position.set(5.84, 1.85, -5); scene.add(wb);
@@ -496,7 +498,7 @@ sheerCurtain(5, 1, .28);
   pot.position.set(x, .22, -11.55); scene.add(pot);
   return pot;
 });
-lightPool(0, -10, 10, 3.4, 0xff9a50, .2);
+lightPool(0, -10, 10, 3.4, 0xff9a50, .12);
 sheerCurtain(-5, 0, .32);
 {
   // Photoreal city plate fills the window — soft haze near glass, no cartoon treeline
@@ -504,13 +506,13 @@ sheerCurtain(-5, 0, .32);
     new THREE.MeshBasicMaterial({ map: skyTex, fog: false }));
   city.position.set(0, 3.6, -26); scene.add(city);
   const haze = new THREE.Mesh(new THREE.PlaneGeometry(28, 10),
-    new THREE.MeshBasicMaterial({ map: glowTex, color: 0xe09a55, transparent: true, opacity: .22, depthWrite: false }));
+    new THREE.MeshBasicMaterial({ map: glowTex, color: 0xe09a55, transparent: true, opacity: .1, depthWrite: false }));
   haze.position.set(0, 2.4, -16); scene.add(haze);
   const sunSpr = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: glowTex, color: 0xffd9a0, transparent: true, opacity: .55,
+    map: glowTex, color: 0xffd9a0, transparent: true, opacity: .28,
     blending: THREE.AdditiveBlending, depthWrite: false, fog: false,
   }));
-  sunSpr.scale.set(18, 18, 1); sunSpr.position.set(6, 6.2, -26); scene.add(sunSpr);
+  sunSpr.scale.set(11, 11, 1); sunSpr.position.set(6, 6.2, -26); scene.add(sunSpr);
 }
 
 /* ================= dust + shafts ================= */
@@ -537,9 +539,14 @@ if (HI) {
 let composer = null;
 function enableBloom() {
   if (composer || !HI) return;
-  composer = new EffectComposer(renderer);
+  // Composer bypasses the canvas's own MSAA, so the target has to multisample
+  // itself or every brass edge in the set goes back to stair-steps.
+  const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+  composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(size.x, size.y, {
+    samples: 4, type: THREE.HalfFloatType,
+  }));
   composer.addPass(new RenderPass(scene, camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .28, .4, .85));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .18, .5, .92));
   composer.addPass(new ShaderPass({
     uniforms: { tDiffuse: { value: null }, uVig: { value: .42 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
@@ -547,8 +554,16 @@ function enableBloom() {
       uniform sampler2D tDiffuse; uniform float uVig; varying vec2 vUv;
       void main(){
         vec4 c = texture2D(tDiffuse, vUv);
-        c.rgb += vec3(0.024, 0.008, -0.012) * (1.0 - c.rgb);
-        c.rgb *= vec3(1.02, 1.0, 0.97);
+        // The bloom pass leaves HDR values above 1.0 in the half-float target;
+        // the S-curve below goes negative on those, so clamp before grading.
+        c.rgb = clamp(c.rgb, 0.0, 1.0);
+        // Filmic split-tone: warm highlights, cool shadows. The separation is
+        // what reads as "graded" — a uniform warm push just reads as sepia.
+        float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
+        c.rgb += vec3(-0.016, -0.004, 0.022) * (1.0 - smoothstep(0.0, 0.45, l));
+        c.rgb += vec3( 0.026,  0.010, -0.020) * smoothstep(0.35, 1.0, l);
+        // gentle S-curve for contrast without crushing either end
+        c.rgb = mix(c.rgb, c.rgb * c.rgb * (3.0 - 2.0 * c.rgb), 0.22);
         float d = distance(vUv, vec2(0.5, 0.46));
         c.rgb *= 1.0 - uVig * smoothstep(0.34, 0.94, d);
         gl_FragColor = c;
@@ -559,27 +574,27 @@ function enableBloom() {
   composer.setPixelRatio(renderer.getPixelRatio());
 }
 
-/* ================= camera: constant-speed Steadicam =================
-   Even Z steps → getPointAt → linear scroll map = same speed the whole reel.
+/* ================= camera: a walk with holds on the two money shots =========
+   Even Z steps give constant speed, which is wrong for film — the reel has to
+   slow where there's something to look at. Points cluster at the Executive
+   table and again at the Conference wide, so getPointAt decelerates there.
 */
-const CHAPTERS = ['Arrival', 'Threshold', 'Executive', 'Through', 'Conference', 'Reserve'];
-
-/* ~1.8–2.0m depth steps — constant spacing keeps world speed even under getPointAt */
 const PATH = [
   [0, 1.55, 18.5], [0, 1.55, 16.6], [0, 1.55, 14.6], [0, 1.55, 12.6],
-  [0.15, 1.55, 10.8], [0.55, 1.55, 9.2], [1.15, 1.55, 8.0],
-  [1.0, 1.55, 6.4], [0.55, 1.55, 4.6], [0.15, 1.55, 2.8],
-  [0.05, 1.55, 1.0], [-0.05, 1.55, -0.8], [-0.15, 1.55, -2.6], [-0.3, 1.55, -4.6],
-  // end: hold on the conference table — form is the last chapter, not the wall screen
-  [0.05, 1.58, -4.4], [0.2, 1.56, -4.15],
+  // approach and hold on the Executive table (z = 7)
+  [0.15, 1.56, 10.8], [0.7, 1.61, 9.9], [1.2, 1.67, 9.15], [1.35, 1.69, 8.9],
+  [1.0, 1.55, 6.6], [0.55, 1.55, 4.6], [0.15, 1.55, 2.8],
+  // through the glass into Room B, settling into a wide
+  [0.05, 1.55, 1.0], [-0.05, 1.56, -0.6], [-0.1, 1.58, -1.9],
+  [-0.05, 1.6, -2.6], [0, 1.6, -2.95], [0, 1.6, -3.05],
 ].map(([x, y, z]) => new THREE.Vector3(x, y, z));
 
 const LOOK = [
   [0, 1.4, 13.2], [0, 1.4, 11.5], [0, 1.4, 9.8], [0, 1.4, 8.5],
-  [0.05, 1.4, 7.6], [-0.1, 1.42, 7.1], [-0.35, 1.42, 6.8],
+  [0.05, 1.38, 7.6], [-0.05, 1.33, 7.2], [-0.28, 1.28, 7.0], [-0.38, 1.26, 6.95],
   [-0.2, 1.4, 4.2], [0, 1.4, 1.5], [0, 1.4, -1.2],
-  [0.1, 1.4, -2.8], [0.25, 1.4, -4.2], [0.35, 1.4, -5.0], [0.35, 1.4, -5.4],
-  [0.12, 1.3, -5.55], [0.02, 1.22, -5.85],
+  [0.08, 1.42, -2.8], [0.05, 1.4, -4.4], [0.02, 1.36, -5.6],
+  [0, 1.34, -6.3], [0, 1.32, -6.7], [0, 1.32, -6.8],
 ].map(([x, y, z]) => new THREE.Vector3(x, y, z));
 
 const posCurve = new THREE.CatmullRomCurve3(PATH, false, 'centripetal');
@@ -587,12 +602,8 @@ const lookCurve = new THREE.CatmullRomCurve3(LOOK, false, 'centripetal');
 posCurve.updateArcLengths();
 lookCurve.updateArcLengths();
 
-const SEGS = CHAPTERS.length - 1;
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const smoothstep01 = (x) => { const t = clamp01(x); return t * t * (3 - 2 * t); };
-const chapterAt = (s) => Math.min(CHAPTERS.length - 1, Math.floor(s * SEGS + 0.001));
-const slateForProgress = (p) => (p >= 0.86 ? -1 : chapterAt(p));
-const chapAt = CHAPTERS.map((_, i) => (i === CHAPTERS.length - 1 ? 1 : i / SEGS));
 
 /* Lenis = only input smoother. Camera follows with one light damp. */
 gsap.registerPlugin(ScrollTrigger);
@@ -609,189 +620,176 @@ if (window.Lenis && !reduceMotion) {
   lenis.on('scroll', ScrollTrigger.update);
   lenis.stop();
 }
+
+/* ================= slates: one line at a time ================= */
+const slates = [...document.querySelectorAll('.slate')];
+/* Cut points sit on the beat each line describes, not on even slices. */
+const SLATE_CUTS = [0, 0.27, 0.6];
+const SLATE_END = 0.9;
+const slateForProgress = (p) => {
+  if (p >= SLATE_END) return -1;
+  let i = 0;
+  while (i + 1 < SLATE_CUTS.length && p >= SLATE_CUTS[i + 1]) i++;
+  return i;
+};
+
+let slateIdx = -2, slateLive = false;
+const SLATE_BITS = '.l, .eyebrow, .slate-sub';
+slates.forEach((s) => gsap.set(s, { autoAlpha: 0 }));
+
+/* Fades out rather than snapping, so slates cross-dissolve into each other and
+   the last one dissolves into the film/content handoff. */
+function hideSlate(el) {
+  gsap.killTweensOf(el);
+  gsap.killTweensOf(el.querySelectorAll(SLATE_BITS));
+  gsap.to(el, {
+    autoAlpha: 0, duration: reduceMotion ? 0 : .45, ease: 'power2.in', overwrite: true,
+    onComplete: () => {
+      // Only reset the lines if this slate hasn't been scrolled back into.
+      if (slates[slateIdx] === el) return;
+      gsap.set(el.querySelectorAll(SLATE_BITS), { clearProps: 'opacity,visibility,transform' });
+    },
+  });
+}
+
+function setSlate(i) {
+  if (i === slateIdx) return;
+  const prev = slates[slateIdx];
+  slateIdx = i;
+  if (prev) hideSlate(prev);
+  const s = slates[i];
+  if (!s) return;
+  if (reduceMotion) { gsap.set(s, { autoAlpha: 1 }); return; }
+  gsap.fromTo(s, { autoAlpha: 0 }, { autoAlpha: 1, duration: .7, ease: 'power2.out', overwrite: true });
+  const bits = s.querySelectorAll(SLATE_BITS);
+  gsap.fromTo(bits, { yPercent: 105, autoAlpha: 0 },
+    { yPercent: 0, autoAlpha: 1, duration: .85, stagger: .07, ease: 'power3.out', overwrite: true });
+}
+
+/* The film owns only the hero. Past it the canvas stops rendering and the
+   document is a normal page. */
+let filmLive = true;
 ScrollTrigger.create({
   id: 'film',
-  trigger: '.film-run',
+  trigger: '#filmRun',
   start: 'top top',
   end: 'bottom bottom',
   onUpdate: (s) => { progress = s.progress; },
+  onLeave: () => { filmLive = false; document.body.classList.add('past-film'); setSlate(-1); },
+  onEnterBack: () => { filmLive = true; document.body.classList.remove('past-film'); },
 });
 
-function yFromProgress(t) {
-  const st = ScrollTrigger.getById('film');
-  if (!st) {
-    const run = document.querySelector('.film-run');
-    return clamp01(t) * Math.max(0, (run?.offsetHeight || 0) - innerHeight);
-  }
-  return st.start + (st.end - st.start) * clamp01(t);
-}
-function yForBook() {
-  const book = document.getElementById('book');
-  if (!book) return yFromProgress(1);
-  const topPad = isMobile ? 20 : 32;
-  return Math.max(0, book.getBoundingClientRect().top + scrollY - topPad);
-}
-function scrollToProgress(t, duration) {
-  const target = clamp01(t);
-  const dist = Math.abs(target - smooth);
-  const dur = duration ?? (0.65 + dist * 1.4);
-  // Reserve (1) lands on the form/footer, not just the last camera frame
-  const y = target >= 0.999 ? yForBook() : yFromProgress(target);
-  if (lenis) lenis.scrollTo(y, { duration: dur, easing: (x) => 1 - Math.pow(1 - x, 3) });
-  else scrollTo({ top: y, behavior: 'smooth' });
-}
-function jumpToProgress(t) {
-  progress = clamp01(t);
-  smooth = progress;
-  const y = progress >= 0.999 ? yForBook() : yFromProgress(progress);
-  if (lenis) lenis.scrollTo(y, { immediate: true }); else scrollTo({ top: y });
-}
-[...document.querySelectorAll('[data-scroll-to]')].map((a) =>
-  a.addEventListener('click', (e) => { e.preventDefault(); scrollToProgress(parseFloat(a.dataset.scrollTo)); }));
-[...document.querySelectorAll('#chapters button')].map((b, i) => {
-  b.addEventListener('click', () => scrollToProgress(parseFloat(b.dataset.goto ?? chapAt[i])));
-});
-
-/* ================= text: one slate at a time ================= */
-const slates = [...document.querySelectorAll('.moment:not(.m-book)')];
-let slateIdx = -2, slateLive = false;
-const slateBits = '.l, .fade-line, .kicker, .spec-row, .sub';
-slates.map((s) => { s.classList.remove('on'); gsap.set(s, { autoAlpha: 0, y: 0, clearProps: 'transform' }); });
-function clearSlate(s) {
-  if (!s) return;
-  gsap.killTweensOf(s);
-  gsap.killTweensOf(s.querySelectorAll(slateBits));
-  s.classList.remove('on');
-  gsap.set(s, { autoAlpha: 0, y: 0 });
-  gsap.set(s.querySelectorAll(slateBits), { clearProps: 'opacity,visibility,transform' });
-}
-function setSlate(i) {
-  if (i === slateIdx) return;
-  clearSlate(slates[slateIdx]);
-  slateIdx = i;
-  const s = slates[i];
-  if (!s) return;
-  s.classList.add('on');
-  if (reduceMotion) { gsap.set(s, { autoAlpha: 1 }); return; }
-  gsap.fromTo(s, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: .7, ease: 'power2.out', overwrite: true });
-  const lines = s.querySelectorAll(slateBits);
-  if (lines.length) gsap.fromTo(lines, { y: 10, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .55, stagger: .06, overwrite: true, delay: .03 });
-}
-{
-  const bookEl = document.getElementById('book');
-  const bookBits = bookEl.querySelectorAll('.kicker, h2, form, .book-alt, .book-addr, .replay');
-  gsap.set(bookBits, { autoAlpha: 0, y: isMobile ? 18 : 24 });
+/* The film hands off to the document: letterbox opens out, grade and canvas
+   dissolve while the first section's gradient rises over them. Scrubbed, so it
+   tracks the scroll instead of snapping at the boundary. */
+if (!reduceMotion) {
+  // Two stages. The frame releases while the film is still running...
+  gsap.to('.letterbox', {
+    scaleY: 0, ease: 'power1.inOut',
+    scrollTrigger: { trigger: '#filmRun', start: 'bottom bottom+=70%', end: 'bottom bottom', scrub: true },
+  });
+  // ...then the image dissolves under the first section as it rises, so the two
+  // overlap instead of leaving a gap of nothing between them.
   gsap.timeline({
-    defaults: { ease: 'power2.out' },
-    scrollTrigger: {
-      trigger: bookEl,
-      start: 'top 92%',
-      end: 'top 42%',
-      scrub: true,
-    },
-  }).to(bookBits, { y: 0, autoAlpha: 1, duration: 1, stagger: 0.07 }, 0);
+    scrollTrigger: { trigger: '.lede-section', start: 'top bottom', end: 'top 30%', scrub: true },
+  })
+    .to('#stage', { opacity: 0, ease: 'power2.inOut' }, 0)
+    .to('.hero-grade', { opacity: 0, ease: 'power2.inOut' }, 0)
+    .to('.grain', { opacity: 0, ease: 'none' }, .3);
 }
 
-/* ================= HUD ================= */
+/* ================= page: reveals, nav state, smooth anchors ================= */
 const hint = document.getElementById('scrollHint');
 const leak = document.getElementById('lightLeak');
-const chapBtns = [...document.querySelectorAll('#chapters button')];
-let lastCi = -1;
-const scrub = document.getElementById('scrub');
-const scrubFill = document.getElementById('scrubFill');
-const scrubHead = document.getElementById('scrubHead');
-const scrubTicks = document.getElementById('scrubTicks');
-if (scrubTicks) {
-  chapAt.map((t, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.style.left = `${t * 100}%`;
-    b.setAttribute('aria-label', CHAPTERS[i]);
-    b.addEventListener('pointerdown', (e) => e.stopPropagation());
-    b.addEventListener('click', (e) => { e.stopPropagation(); scrollToProgress(t); });
-    scrubTicks.appendChild(b);
-    return b;
+
+if (!reduceMotion) {
+  const reveals = document.querySelectorAll(
+    '.lede, .lede-facts, .sec-head, .room-img, .room-body, .included-img, .ticks, '
+    + '.rates-table, .notes, .visit-addr, .visit-links, .visit-img, #bookForm, .foot-grid > *');
+  reveals.forEach((el) => {
+    gsap.fromTo(el, { autoAlpha: 0, y: 20 }, {
+      autoAlpha: 1, y: 0, duration: .85, ease: 'power2.out',
+      scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+    });
   });
-}
-const tickBtns = [...document.querySelectorAll('#scrubTicks button')];
-if (scrub) {
-  const track = document.getElementById('scrubTrack');
-  const at = (e) => {
-    const r = track.getBoundingClientRect();
-    jumpToProgress((e.clientX - r.left) / r.width);
-  };
-  scrub.addEventListener('pointerdown', (e) => {
-    dragging = true;
-    scrub.setPointerCapture(e.pointerId);
-    at(e);
-  });
-  scrub.addEventListener('pointermove', (e) => { if (dragging) at(e); });
-  const up = () => { dragging = false; };
-  scrub.addEventListener('pointerup', up);
-  scrub.addEventListener('pointercancel', up);
 }
 
-addEventListener('keydown', (e) => {
-  if (e.target.closest('input, select, textarea')) return;
-  const dir = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1
-    : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
-  if (!dir) return;
-  e.preventDefault();
-  const next = Math.min(chapAt.length - 1, Math.max(0, lastCi + dir));
-  scrollToProgress(chapAt[next]);
+/* Nav gets a backdrop once the film is behind us, and marks the section in view. */
+ScrollTrigger.create({
+  start: 'top -60',
+  onUpdate: (s) => document.body.classList.toggle('scrolled', s.scroll() > 60),
 });
 
-/* ================= booking: real inquiry + OSS pickers ================= */
-document.getElementById('bookForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const f = new FormData(e.target);
-  const subject = encodeURIComponent(`Room inquiry — ${f.get('room')} — ${f.get('date')} ${f.get('time')}`);
-  const body = encodeURIComponent(`Hi Deskly,\n\nRoom: ${f.get('room')}\nDate: ${f.get('date')}\nTime: ${f.get('time')}\nDuration: ${f.get('dur')}\nEmail: ${f.get('email')}\n\nPlease confirm availability.`);
-  document.getElementById('bookFine').textContent = 'Opening your email app. We reply within two working hours.';
-  location.href = `mailto:info@deskly.in?subject=${subject}&body=${body}`;
+const navLinks = [...document.querySelectorAll('.nav-links a')];
+const sectionFor = new Map(
+  navLinks.map((a) => [document.querySelector(a.hash), a]).filter(([s]) => s));
+if (sectionFor.size) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (!e.isIntersecting) return;
+      navLinks.forEach((a) => a.removeAttribute('aria-current'));
+      sectionFor.get(e.target)?.setAttribute('aria-current', 'true');
+    });
+  }, { rootMargin: '-45% 0px -50% 0px' });
+  sectionFor.forEach((_, section) => io.observe(section));
+}
+
+/* Anchor clicks ride Lenis so they match the page's own scroll feel. */
+document.querySelectorAll('a[href^="#"]:not(.skip)').forEach((a) => {
+  a.addEventListener('click', (e) => {
+    const target = a.hash === '#top' ? document.body : document.querySelector(a.hash);
+    if (!target) return;
+    e.preventDefault();
+    const y = a.hash === '#top' ? 0 : target.getBoundingClientRect().top + scrollY - 72;
+    if (lenis) lenis.scrollTo(y, { duration: 1.1, easing: (x) => 1 - Math.pow(1 - x, 3) });
+    else scrollTo({ top: y, behavior: 'smooth' });
+  });
 });
 
-if (window.flatpickr) {
-  flatpickr('#bookDate', {
-    minDate: 'today',
-    dateFormat: 'Y-m-d',
-    altInput: true,
-    altFormat: 'D, j M Y',
-    disableMobile: true,
-    appendTo: document.body,
+/* ================= booking: a real inquiry, native controls ================= */
+const form = document.getElementById('bookForm');
+const roomSelect = document.getElementById('bookRoom');
+const fine = document.getElementById('bookFine');
+const dateInput = document.getElementById('bookDate');
+
+dateInput.min = new Date().toISOString().slice(0, 10);
+
+/* "Reserve the Executive" preselects that room before jumping to the form. */
+document.querySelectorAll('[data-room]').forEach((a) => {
+  a.addEventListener('click', () => {
+    const i = a.dataset.room === 'executive' ? 0 : 1;
+    roomSelect.selectedIndex = i;
   });
-  flatpickr('#bookTime', {
-    enableTime: true,
-    noCalendar: true,
-    dateFormat: 'H:i',
-    time_24hr: true,
-    minuteIncrement: 15,
-    defaultHour: 10,
-    defaultMinute: 0,
-    disableMobile: true,
-    appendTo: document.body,
-  });
-}
+});
 
-if (window.TomSelect) {
-  const selectOpts = {
-    allowEmptyOption: false,
-    controlInput: null,
-    hideSelected: false,
-    maxOptions: null,
-  };
-  new TomSelect('#bookRoom', selectOpts);
-  new TomSelect('#bookDur', selectOpts);
-}
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!form.reportValidity()) return;
+  const f = new FormData(form);
+  const lines = [
+    'Hi Deskly,', '',
+    `Room: ${f.get('room')}`,
+    `Date: ${f.get('date')}`,
+    `Start: ${f.get('time')}`,
+    `Duration: ${f.get('dur')}`,
+    f.get('people') ? `People: ${f.get('people')}` : null,
+    f.get('notes') ? `Notes: ${f.get('notes')}` : null,
+    '', 'Please confirm availability.',
+    `— ${f.get('email')}`,
+  ].filter(Boolean);
+  const subject = `Room inquiry — ${f.get('room')} — ${f.get('date')} ${f.get('time')}`;
+  fine.textContent = 'Opening your email app — send the draft and we\'ll reply within two working hours.';
+  fine.dataset.state = 'sent';
+  location.href = `mailto:info@deskly.in?subject=${encodeURIComponent(subject)}`
+    + `&body=${encodeURIComponent(lines.join('\n'))}`;
+});
 
-await load.mark(92, 'Almost ready');
-
-/* ================= frame loop — Lenis + camera + render on ONE rAF ================= */
+/* ================= frame loop — Lenis + camera + render on ONE rAF ========= */
 let pageHidden = false;
 document.addEventListener('visibilitychange', () => { pageHidden = document.hidden; });
 const clock = new THREE.Clock();
 const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
-let lastEnding = false, lastLeak = -1, lastBar = -1;
+let lastLeak = -1;
 
 function damp(current, target, rate, dt) {
   return current + (target - current) * (1 - Math.exp(-rate * dt));
@@ -818,44 +816,22 @@ function updateDoorAndLights(u, dt) {
   keyB.intensity = 6 + smoothstep01((u - 0.55) / 0.2) * 52;
   daylight.intensity = 18 + smoothstep01((u - 0.6) / 0.22) * 34;
   sun.intensity = .3 + smoothstep01((u - 0.72) / 0.18) * 1.7;
+  bounce.intensity = .08 + smoothstep01((u - 0.12) / 0.24) * .46;
   scene.fog.density = .05 - u * .033;
 }
 
 function updateGlassAndScreens(u) {
   const cross = Math.exp(-Math.pow((u - 0.62) * 18, 2));
-  glassWallMat.opacity = .08 - cross * .075;
+  glassL.material.opacity = .08 - cross * .075;
   glassL.visible = glassR.visible = cross < .85;
-  const gOpen = smoothstep01((u - 0.54) / 0.08) * (1 - smoothstep01((u - 0.72) / 0.1));
+  const gOpen = smoothstep01((u - 0.54) / 0.08) * (1 - smoothstep01((u - 0.78) / 0.1));
   glassPivot.rotation.y = gOpen * 1.75;
   if (Math.abs(gOpen - lastGOpen) > .006) {
     lastGOpen = gOpen;
     if (renderer.shadowMap.enabled) renderer.shadowMap.needsUpdate = true;
   }
   winGlass.material.opacity = .07 + smoothstep01((u - 0.78) / 0.14) * .05;
-  // Quiet ambient branding on the wall — never a competing end plate
-  const brandIn = smoothstep01((u - 0.14) / 0.14);
-  const brandDim = 1 - smoothstep01((u - 0.88) / 0.1) * 0.35;
-  logoMat.opacity = brandIn * 0.42 * brandDim;
   screenGlow.intensity = smoothstep01((u - 0.78) / 0.16) * 18;
-}
-
-function updateHud(p) {
-  const ending = p > 0.86;
-  if (ending !== lastEnding) { lastEnding = ending; document.body.classList.toggle('ending', ending); }
-  if (hint) hint.style.opacity = p > .035 ? 0 : 1;
-  if (Math.abs(p - lastBar) > 0.002) {
-    lastBar = p;
-    if (scrubFill) scrubFill.style.transform = `scaleX(${p})`;
-    if (scrubHead) scrubHead.style.left = `${p * 100}%`;
-    if (scrub) scrub.setAttribute('aria-valuenow', String(Math.round(p * 100)));
-  }
-  const ci = chapterAt(p);
-  if (ci !== lastCi) {
-    lastCi = ci;
-    chapBtns.map((b, i) => b.classList.toggle('on', i === ci));
-    tickBtns.map((b, i) => b.classList.toggle('on', i === ci));
-  }
-  if (slateLive) setSlate(slateForProgress(p));
 }
 
 function probeQuality(p, dt) {
@@ -877,9 +853,12 @@ function frame(now) {
 
   const dt = Math.min(clock.getDelta(), .05);
   time += dt;
-  smooth = damp(smooth, progress, reduceMotion ? 60 : dragging ? 28 : 16, dt);
-  const p = clamp01(smooth);
+  smooth = damp(smooth, progress, reduceMotion ? 60 : 16, dt);
 
+  // Past the hero the canvas is hidden — don't pay for frames nobody sees.
+  if (!filmLive) return;
+
+  const p = clamp01(smooth);
   posCurve.getPointAt(p, camPos);
   camera.position.copy(camPos);
   lookCurve.getPointAt(p, camLook);
@@ -888,7 +867,8 @@ function frame(now) {
   updateDoorAndLights(p, dt);
   updateGlassAndScreens(p);
   if (dust && TIER === 0) dust.rotation.y = time * .006;
-  updateHud(p);
+  if (hint) hint.style.opacity = p > .04 ? 0 : 1;
+  if (slateLive) setSlate(slateForProgress(p));
   probeQuality(p, dt);
 
   if (TIER === 0 && composer) composer.render(); else renderer.render(scene, camera);
@@ -906,7 +886,7 @@ addEventListener('resize', onResize);
 visualViewport?.addEventListener('resize', onResize);
 
 /* ---- adaptive quality: Cine / Smooth / Lite ---- */
-const TIER_DPR = [1.25, 1.15, 1];
+const TIER_DPR = [2, 1.5, 1.15];
 function applyTier(t) {
   TIER = t;
   const dpr = Math.min(devicePixelRatio, TIER_DPR[t]);
@@ -930,10 +910,13 @@ await nextFrame();
 await load.finish();
 document.body.classList.add('entered');
 lenis?.start();
-slateLive = true;
-setSlate(0);
+
+/* Browsers restore scroll on reload, so none of this can assume we start at the
+   top. Adopt whatever position we actually loaded at before showing a slate. */
 ScrollTrigger.refresh();
+progress = ScrollTrigger.getById('film')?.progress ?? 0;
+smooth = progress;
+document.body.classList.toggle('scrolled', scrollY > 60);
+slateLive = true;
+setSlate(filmLive ? slateForProgress(progress) : -1);
 addEventListener('load', () => ScrollTrigger.refresh());
-// Recalc film range after fonts/layout settle so footer scroll room stays accurate
-requestAnimationFrame(() => ScrollTrigger.refresh());
-setTimeout(() => ScrollTrigger.refresh(), 400);
