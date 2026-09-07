@@ -106,22 +106,21 @@ body.scrolled .nav::before{opacity:1}
   background-image:url("./assets/grain.svg");background-size:260px 260px}
 .letterbox{position:fixed;left:0;right:0;height:0;background:#000;z-index:4;pointer-events:none;
   transition:height .8s ease}
-.letterbox.top{top:0}
-.letterbox.bottom{bottom:0}
+.letterbox.top{top:0;transform-origin:50% 0}
+.letterbox.bottom{bottom:0;transform-origin:50% 100%}
 body.entered .letterbox{height:5.5vh}
 .light-leak{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;mix-blend-mode:screen;
   background:radial-gradient(ellipse 58% 38% at 50% 54%,rgba(255,182,110,.32),transparent 70%)}
 
-/* hero fades out as the document takes over */
-#stage,.hero-grade,.letterbox,.grain{transition:opacity .5s linear}
-body.past-film #stage,body.past-film .hero-grade,body.past-film .letterbox{opacity:0;pointer-events:none}
+/* The film's furniture is scrubbed out over the tail of #filmRun (see main.js);
+   past-film only kills interaction, since rendering stops there anyway. */
+body.past-film #stage,body.past-film .hero-grade,body.past-film .letterbox{pointer-events:none}
 
 .film-run{height:340vh;pointer-events:none}
 
 .slate{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;
   align-items:center;justify-content:center;text-align:center;pointer-events:none;
   padding-inline:var(--gutter);opacity:0;visibility:hidden}
-.slate.on{opacity:1;visibility:visible}
 .slate.lower{justify-content:flex-end;padding-bottom:16vh}
 .slate::before{content:"";position:absolute;left:50%;top:50%;translate:-50% -50%;
   width:min(760px,94vw);height:44vh;pointer-events:none;border-radius:50%;
@@ -147,15 +146,21 @@ body.entered .scroll-hint{opacity:1}
 .scroll-rule{transform-origin:top}
 
 /* ---------------- sections ---------------- */
-main{position:relative;z-index:10;background:var(--ink)}
-.section{padding-block:var(--sec-y);border-top:1px solid var(--rule)}
+main{position:relative;z-index:10}
+.section{padding-block:var(--sec-y);border-top:1px solid var(--rule);background:var(--ink)}
 .section:first-child{border-top:none}
 .section-raised{background:var(--ink-raised)}
 .sec-head{max-width:46rem;margin-bottom:clamp(2.5rem,6vh,4.5rem)}
 .sec-head .room-copy{margin-top:1.4rem}
 
 /* lede */
-.lede-section{padding-top:clamp(4rem,10vh,7rem)}
+.lede-section{
+  padding-top:clamp(6.5rem,20vh,11rem);
+  background:linear-gradient(180deg,
+    rgba(11,10,9,0) 0,
+    rgba(11,10,9,.62) 10vh,
+    rgba(11,10,9,.93) 20vh,
+    var(--ink) 34vh)}
 .lede{max-width:38ch;font-size:clamp(1.5rem,2.9vw,2.35rem)}
 .lede-facts{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;
   margin-top:clamp(3rem,7vh,5rem);padding-top:2.25rem;border-top:1px solid var(--rule)}

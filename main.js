@@ -634,7 +634,7 @@ ScrollTrigger.create({
 const slates = [...document.querySelectorAll('.slate')];
 /* Cut points sit on the beat each line describes, not on even slices. */
 const SLATE_CUTS = [0, 0.27, 0.6];
-const SLATE_END = 0.96;
+const SLATE_END = 0.9;
 const slateForProgress = (p) => {
   if (p >= SLATE_END) return -1;
   let i = 0;
@@ -644,29 +644,54 @@ const slateForProgress = (p) => {
 
 let slateIdx = -2, slateLive = false;
 const SLATE_BITS = '.l, .eyebrow, .slate-sub';
-slates.forEach((s) => { s.classList.remove('on'); gsap.set(s, { autoAlpha: 0 }); });
+slates.forEach((s) => gsap.set(s, { autoAlpha: 0 }));
+
+/* Fades out rather than snapping, so slates cross-dissolve into each other and
+   the last one dissolves into the film/content handoff. */
+function hideSlate(el) {
+  gsap.killTweensOf(el);
+  gsap.killTweensOf(el.querySelectorAll(SLATE_BITS));
+  gsap.to(el, {
+    autoAlpha: 0, duration: reduceMotion ? 0 : .45, ease: 'power2.in', overwrite: true,
+    onComplete: () => {
+      // Only reset the lines if this slate hasn't been scrolled back into.
+      if (slates[slateIdx] === el) return;
+      gsap.set(el.querySelectorAll(SLATE_BITS), { clearProps: 'opacity,visibility,transform' });
+    },
+  });
+}
 
 function setSlate(i) {
   if (i === slateIdx) return;
   const prev = slates[slateIdx];
-  if (prev) {
-    gsap.killTweensOf(prev);
-    gsap.killTweensOf(prev.querySelectorAll(SLATE_BITS));
-    prev.classList.remove('on');
-    gsap.set(prev, { autoAlpha: 0 });
-    gsap.set(prev.querySelectorAll(SLATE_BITS), { clearProps: 'opacity,visibility,transform' });
-  }
   slateIdx = i;
+  if (prev) hideSlate(prev);
   const s = slates[i];
   if (!s) return;
-  s.classList.add('on');
   if (reduceMotion) { gsap.set(s, { autoAlpha: 1 }); return; }
-  gsap.fromTo(s, { autoAlpha: 0 }, { autoAlpha: 1, duration: .6, ease: 'power2.out', overwrite: true });
+  gsap.fromTo(s, { autoAlpha: 0 }, { autoAlpha: 1, duration: .7, ease: 'power2.out', overwrite: true });
   const bits = s.querySelectorAll(SLATE_BITS);
-  if (bits.length) {
-    gsap.fromTo(bits, { yPercent: 105, autoAlpha: 0 },
-      { yPercent: 0, autoAlpha: 1, duration: .85, stagger: .07, ease: 'power3.out', overwrite: true });
-  }
+  gsap.fromTo(bits, { yPercent: 105, autoAlpha: 0 },
+    { yPercent: 0, autoAlpha: 1, duration: .85, stagger: .07, ease: 'power3.out', overwrite: true });
+}
+
+/* The film hands off to the document: letterbox opens out, grade and canvas
+   dissolve while the first section's gradient rises over them. Scrubbed, so it
+   tracks the scroll instead of snapping at the boundary. */
+if (!reduceMotion) {
+  // Two stages. The frame releases while the film is still running...
+  gsap.to('.letterbox', {
+    scaleY: 0, ease: 'power1.inOut',
+    scrollTrigger: { trigger: '#filmRun', start: 'bottom bottom+=70%', end: 'bottom bottom', scrub: true },
+  });
+  // ...then the image dissolves under the first section as it rises, so the two
+  // overlap instead of leaving a gap of nothing between them.
+  gsap.timeline({
+    scrollTrigger: { trigger: '.lede-section', start: 'top bottom', end: 'top 30%', scrub: true },
+  })
+    .to('#stage', { opacity: 0, ease: 'power2.inOut' }, 0)
+    .to('.hero-grade', { opacity: 0, ease: 'power2.inOut' }, 0)
+    .to('.grain', { opacity: 0, ease: 'none' }, .3);
 }
 
 /* ================= page: reveals, nav state, smooth anchors ================= */
