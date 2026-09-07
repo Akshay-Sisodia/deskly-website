@@ -305,17 +305,18 @@ function chair(x, z, ry, mat) {
   });
   scene.add(g); return g;
 }
-[...Array(4)].map((_, i) => {
-  chair(-1.5 + i * 1.0, 6.05, 0, MAT.fabric);
-  chair(-1.5 + i * 1.0, 7.95, Math.PI, MAT.fabric);
-});
+/* Twelve seats — five down each side, one at each end. The page quotes twelve,
+   so the room shows twelve. Seats are listed as [x, z, rotY] and the cushions
+   come off the same list, so a count can't drift out of sync again. */
+const SEATS_A = [
+  ...[-1.8, -.9, 0, .9, 1.8].flatMap((x) => [[x, 6.05, 0], [x, 7.95, Math.PI]]),
+  [-2.75, 7, Math.PI / 2], [2.75, 7, -Math.PI / 2],
+];
+SEATS_A.forEach(([x, z, ry]) => chair(x, z, ry, MAT.fabric));
 const padGeo = new RoundedBoxGeometry(.46, .035, .46, 3, .012);
-[-1.5, -.5, .5, 1.5].map((x) => {
-  const a = new THREE.Mesh(padGeo, MAT.paper);
-  a.position.set(x, .54, 6.05); scene.add(a);
-  const b = new THREE.Mesh(padGeo, MAT.paper);
-  b.position.set(x, .54, 7.95); scene.add(b);
-  return a;
+SEATS_A.forEach(([x, z]) => {
+  const pad = new THREE.Mesh(padGeo, MAT.paper);
+  pad.position.set(x, .54, z); scene.add(pad);
 });
 function pendant(x, y, z, r = .24, ceil = 3.24) {
   const shade = new THREE.Mesh(new THREE.CylinderGeometry(r * .2, r, .22, 12, 1, true),
@@ -414,16 +415,17 @@ wallSign(TEX.clock, .42, .42, 5.86, 2.35, -2.2, -Math.PI / 2);
 placeCans([[-3.2, -2.2], [0, -2.2], [3.2, -2.2], [-3.2, -7.8], [0, -7.8], [3.2, -7.8]], 3.42);
 box(11.6, .12, .28, MAT.oakDark, 0, .06, 1.85);
 contactShadow(0, -5, 7.4, 3.4, .6); lightPool(0, -5, 7, 3.2, 0xffbe78, .13);
-[...Array(4)].map((_, i) => {
-  rbox(.34, .025, .26, .006, MAT.paper, -1.8 + i * 1.2, .9, -4.55);
+[-2.4, -.8, .8, 2.4].forEach((x) => {
+  rbox(.34, .025, .26, .006, MAT.paper, x, .9, -4.55);
   const lined = new THREE.Mesh(new THREE.PlaneGeometry(.3, .22), std({ map: TEX.notepad, roughness: .82 }));
-  lined.rotation.x = -Math.PI / 2; lined.position.set(-1.8 + i * 1.2, .918, -4.55); scene.add(lined);
-  return lined;
+  lined.rotation.x = -Math.PI / 2; lined.position.set(x, .918, -4.55); scene.add(lined);
 });
-[...Array(5)].map((_, i) => {
-  chair(-2.4 + i * 1.2, -3.7, Math.PI, MAT.fabricDark);
-  chair(-2.4 + i * 1.2, -6.3, 0, MAT.fabricDark);
-});
+/* Sixteen seats — seven down each side, one at each end. */
+const SEATS_B = [
+  ...[-2.4, -1.6, -.8, 0, .8, 1.6, 2.4].flatMap((x) => [[x, -3.7, Math.PI], [x, -6.3, 0]]),
+  [-3.45, -5, Math.PI / 2], [3.45, -5, -Math.PI / 2],
+];
+SEATS_B.forEach(([x, z, ry]) => chair(x, z, ry, MAT.fabricDark));
 [...Array(3)].map((_, i) => pendant(-2 + i * 2, 2.3, -5, .26, 3.38));
 // display + whiteboard + art + credenza
 {
@@ -619,19 +621,6 @@ if (window.Lenis && !reduceMotion) {
   lenis.stop();
 }
 
-/* The film owns only the hero. Past it the canvas stops rendering and the
-   document is a normal page. */
-let filmLive = true;
-ScrollTrigger.create({
-  id: 'film',
-  trigger: '#filmRun',
-  start: 'top top',
-  end: 'bottom bottom',
-  onUpdate: (s) => { progress = s.progress; },
-  onLeave: () => { filmLive = false; document.body.classList.add('past-film'); setSlate(-1); },
-  onEnterBack: () => { filmLive = true; document.body.classList.remove('past-film'); },
-});
-
 /* ================= slates: one line at a time ================= */
 const slates = [...document.querySelectorAll('.slate')];
 /* Cut points sit on the beat each line describes, not on even slices. */
@@ -676,6 +665,19 @@ function setSlate(i) {
   gsap.fromTo(bits, { yPercent: 105, autoAlpha: 0 },
     { yPercent: 0, autoAlpha: 1, duration: .85, stagger: .07, ease: 'power3.out', overwrite: true });
 }
+
+/* The film owns only the hero. Past it the canvas stops rendering and the
+   document is a normal page. */
+let filmLive = true;
+ScrollTrigger.create({
+  id: 'film',
+  trigger: '#filmRun',
+  start: 'top top',
+  end: 'bottom bottom',
+  onUpdate: (s) => { progress = s.progress; },
+  onLeave: () => { filmLive = false; document.body.classList.add('past-film'); setSlate(-1); },
+  onEnterBack: () => { filmLive = true; document.body.classList.remove('past-film'); },
+});
 
 /* The film hands off to the document: letterbox opens out, grade and canvas
    dissolve while the first section's gradient rises over them. Scrubbed, so it
@@ -908,7 +910,13 @@ await nextFrame();
 await load.finish();
 document.body.classList.add('entered');
 lenis?.start();
-slateLive = true;
-setSlate(0);
+
+/* Browsers restore scroll on reload, so none of this can assume we start at the
+   top. Adopt whatever position we actually loaded at before showing a slate. */
 ScrollTrigger.refresh();
+progress = ScrollTrigger.getById('film')?.progress ?? 0;
+smooth = progress;
+document.body.classList.toggle('scrolled', scrollY > 60);
+slateLive = true;
+setSlate(filmLive ? slateForProgress(progress) : -1);
 addEventListener('load', () => ScrollTrigger.refresh());
