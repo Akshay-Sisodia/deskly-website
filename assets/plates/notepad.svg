@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 384" width="512" height="384">
+  <rect width="512" height="384" fill="#f4efe4"/>
+  <g stroke="#c2a67a" stroke-width="1" opacity=".35">
+    <line x1="36" y1="72" x2="476" y2="72"/>
+    <line x1="36" y1="112" x2="476" y2="112"/>
+    <line x1="36" y1="152" x2="476" y2="152"/>
+    <line x1="36" y1="192" x2="476" y2="192"/>
+    <line x1="36" y1="232" x2="476" y2="232"/>
+    <line x1="36" y1="272" x2="476" y2="272"/>
+    <line x1="36" y1="312" x2="476" y2="312"/>
+    <line x1="36" y1="352" x2="476" y2="352"/>
+  </g>
+  <text x="36" y="48" font-family="Georgia, serif" font-size="22" fill="#c2a67a">Deskly</text>
+  <path d="M48 118 C 120 102 180 148 260 128 C 340 108 400 150 460 132" fill="none" stroke="#2a3344" stroke-width="2.2" stroke-linecap="round" opacity=".7"/>
+  <path d="M56 198 C 140 188 220 230 310 210" fill="none" stroke="#8a3b2e" stroke-width="2" stroke-linecap="round" opacity=".65"/>
+</svg>

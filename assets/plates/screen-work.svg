@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#14110e"/>
+      <stop offset="100%" stop-color="#0a0908"/>
+    </linearGradient>
+    <linearGradient id="oak" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8a6a48"/>
+      <stop offset="50%" stop-color="#c2a67a"/>
+      <stop offset="100%" stop-color="#6b4a2f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+
+  <!-- soft room glow -->
+  <ellipse cx="960" cy="520" rx="520" ry="280" fill="#ffbe78" opacity=".08"/>
+
+  <!-- left: desk nook -->
+  <g transform="translate(220,390)">
+    <rect x="0" y="120" width="320" height="18" rx="4" fill="url(#oak)"/>
+    <rect x="28" y="138" width="14" height="70" rx="3" fill="#3a2a1c"/>
+    <rect x="278" y="138" width="14" height="70" rx="3" fill="#3a2a1c"/>
+    <rect x="90" y="70" width="110" height="72" rx="6" fill="#1a2228" stroke="#c2a67a" stroke-width="2" opacity=".9"/>
+    <rect x="102" y="82" width="86" height="48" rx="3" fill="#2a3844"/>
+    <circle cx="40" cy="112" r="16" fill="#33482c" opacity=".85"/>
+    <text x="160" y="250" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" letter-spacing="4" fill="#c2a67a">FOCUS DESK</text>
+  </g>
+
+  <!-- center: meeting table -->
+  <g transform="translate(700,360)">
+    <ellipse cx="260" cy="170" rx="250" ry="70" fill="#1a1410" opacity=".55"/>
+    <rect x="40" y="120" width="440" height="28" rx="8" fill="url(#oak)"/>
+    <rect x="120" y="148" width="18" height="78" rx="4" fill="#3a2a1c"/>
+    <rect x="382" y="148" width="18" height="78" rx="4" fill="#3a2a1c"/>
+    <!-- chairs -->
+    <rect x="70" y="70" width="54" height="42" rx="8" fill="#4a4038"/>
+    <rect x="160" y="62" width="54" height="42" rx="8" fill="#4a4038"/>
+    <rect x="250" y="62" width="54" height="42" rx="8" fill="#4a4038"/>
+    <rect x="340" y="70" width="54" height="42" rx="8" fill="#4a4038"/>
+    <rect x="70" y="168" width="54" height="42" rx="8" fill="#4a4038"/>
+    <rect x="160" y="176" width="54" height="42" rx="8" fill="#4a4038"/>
+    <rect x="250" y="176" width="54" height="42" rx="8" fill="#4a4038"/>
+    <rect x="340" y="168" width="54" height="42" rx="8" fill="#4a4038"/>
+    <text x="260" y="280" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" letter-spacing="4" fill="#c2a67a">MEETING TABLE</text>
+  </g>
+
+  <!-- right: glass conference -->
+  <g transform="translate(1380,370)">
+    <rect x="0" y="20" width="300" height="200" rx="10" fill="#151a20" stroke="#c2a67a" stroke-width="2" opacity=".85"/>
+    <line x1="100" y1="20" x2="100" y2="220" stroke="#c2a67a" stroke-width="1.5" opacity=".35"/>
+    <line x1="200" y1="20" x2="200" y2="220" stroke="#c2a67a" stroke-width="1.5" opacity=".35"/>
+    <rect x="40" y="110" width="220" height="16" rx="4" fill="url(#oak)" opacity=".9"/>
+    <text x="150" y="270" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" letter-spacing="4" fill="#c2a67a">CONFERENCE</text>
+  </g>
+
+  <text x="960" y="160" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="22" letter-spacing="12" fill="#c2a67a">DESKLY</text>
+  <text x="960" y="250" text-anchor="middle" font-family="Georgia, serif" font-size="64" fill="#f5efe6">Rooms for work that needs quiet.</text>
+  <text x="960" y="320" text-anchor="middle" font-family="Georgia, serif" font-size="28" font-style="italic" fill="#ffd9a8">Desks, meeting rooms, and conference space in Royapettah.</text>
+
+  <text x="960" y="980" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="18" letter-spacing="3" fill="#f5efe6" opacity=".45">Premium meeting rooms  ·  Chennai</text>
+</svg>

@@ -1,0 +1,12 @@
+{
+  "name": "deskly-cinema",
+  "private": true,
+  "description": "Scroll-driven cinematic site for Deskly India meeting rooms.",
+  "scripts": {
+    "start": "node server.cjs",
+    "scan": "npx --yes vibecop@latest scan ."
+  },
+  "dependencies": {
+    "three": "0.160.0"
+  }
+}

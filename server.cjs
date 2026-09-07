@@ -2,7 +2,19 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const ROOT = __dirname;
-const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.mp4': 'video/mp4', '.webm': 'video/webm' };
+const TYPES = {
+  '.html': 'text/html',
+  '.js': 'text/javascript',
+  '.css': 'text/css',
+  '.json': 'application/json',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.ico': 'image/x-icon',
+  '.woff2': 'font/woff2',
+};
 const server = http.createServer((req, res) => {
   let urlPath = decodeURIComponent(req.url.split('?')[0]);
   if (urlPath === '/') urlPath = '/index.html';
@@ -11,17 +23,15 @@ const server = http.createServer((req, res) => {
   fs.stat(file, (err, st) => {
     if (err || !st.isFile()) { res.writeHead(404); res.end('not found'); return; }
     const type = TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream';
-    const range = req.headers.range;
-    if (range && type.startsWith('video')) {
-      const m = /bytes=(\d*)-(\d*)/.exec(range);
-      const start = m && m[1] ? parseInt(m[1], 10) : 0;
-      const end = m && m[2] ? parseInt(m[2], 10) : st.size - 1;
-      res.writeHead(206, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Content-Range': `bytes ${start}-${end}/${st.size}`, 'Content-Length': end - start + 1, 'Cache-Control': 'no-cache' });
-      fs.createReadStream(file, { start, end }).pipe(res);
-    } else {
-      res.writeHead(200, { 'Content-Type': type, 'Accept-Ranges': 'bytes', 'Content-Length': st.size, 'Cache-Control': 'no-cache' });
-      fs.createReadStream(file).pipe(res);
-    }
+    const isAsset = file.includes(`${path.sep}assets${path.sep}`);
+    res.writeHead(200, {
+      'Content-Type': type,
+      'Content-Length': st.size,
+      'Cache-Control': isAsset ? 'public, max-age=604800' : 'no-cache',
+    });
+    fs.createReadStream(file).pipe(res);
   });
 });
-server.listen(3000, () => console.log('Deskly serving at http://localhost:3000'));
+server.listen(3000, () => {
+  process.stdout.write('Deskly serving at http://localhost:3000\n');
+});

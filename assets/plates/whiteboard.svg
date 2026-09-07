@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 576" width="1024" height="576">
+  <rect width="1024" height="576" fill="#efe9dc"/>
+  <rect x="36" y="36" width="952" height="504" fill="none" stroke="#3c465a" stroke-width="2" opacity=".28"/>
+  <text x="64" y="92" font-family="Georgia, serif" font-size="34" fill="#2a3344">Monday stand-up</text>
+  <text x="64" y="128" font-family="Inter, system-ui, sans-serif" font-size="18" fill="#6a7384">Executive  ·  09:30  ·  12 seats</text>
+  <g font-family="Inter, system-ui, sans-serif" font-size="22">
+    <text x="64" y="196" fill="#3a7a48">+  Brand refresh locked</text>
+    <text x="64" y="236" fill="#3a7a48">+  Design system v2</text>
+    <text x="64" y="276" fill="#2a3344">-  Campaign assets</text>
+    <text x="64" y="316" fill="#2a3344">-  Launch deck</text>
+    <text x="64" y="372" fill="#b43c32" font-weight="600">Deadline  Friday 17:00</text>
+  </g>
+  <rect x="620" y="160" width="320" height="200" rx="8" fill="#f7f1e6" stroke="#c2a67a" stroke-width="1.5"/>
+  <text x="640" y="198" font-family="Inter, system-ui, sans-serif" font-size="16" fill="#8a8378" letter-spacing="2">ROOMS</text>
+  <text x="640" y="236" font-family="Georgia, serif" font-size="22" fill="#2a2118">12  Executive</text>
+  <text x="640" y="272" font-family="Georgia, serif" font-size="22" fill="#2a2118">16  Conference</text>
+  <text x="640" y="320" font-family="Inter, system-ui, sans-serif" font-size="15" fill="#6a7384">Reserve the room.</text>
+  <path d="M80 430 C 220 360 360 470 500 390 C 640 320 780 400 920 300" fill="none" stroke="#b43c32" stroke-width="4" stroke-linecap="round" opacity=".75"/>
+</svg>

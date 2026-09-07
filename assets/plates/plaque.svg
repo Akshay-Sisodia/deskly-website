@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 256" width="1024" height="256">
+  <rect width="1024" height="256" fill="#2a2118"/>
+  <rect x="16" y="16" width="992" height="224" fill="none" stroke="#c2a67a" stroke-width="3" opacity=".55"/>
+  <text x="512" y="118" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="600" letter-spacing="14" fill="#c2a67a">EXECUTIVE</text>
+  <text x="512" y="168" text-anchor="middle" font-family="Inter, system-ui, sans-serif" font-size="20" letter-spacing="6" fill="#f2ebe0" opacity=".7">12 SEATS  ·  MEETING ROOM</text>
+</svg>

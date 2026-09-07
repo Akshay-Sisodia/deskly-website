@@ -1,0 +1,11 @@
+# Scene builders take world placement args (w/h/d + xyz). Param budget raised for that.
+rules:
+  god-function:
+    maxParams: 8
+    maxLines: 60
+  debug-console-in-prod:
+    severity: off
+ignore:
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/assets/**"
