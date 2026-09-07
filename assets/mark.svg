@@ -1,8 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Deskly mark">
-  <rect width="80" height="80" rx="18" fill="#0c0a08"/>
-  <path d="M24 62V26q0-10 16-10t16 10v36" fill="none" stroke="#c2a67a" stroke-width="3.4" stroke-linecap="square"/>
-  <path d="M24 62h32" fill="none" stroke="#c2a67a" stroke-width="3.4"/>
-  <path d="M28 62V30q0-6 12-6t12 6v32" fill="none" stroke="#f2ebe0" stroke-width="1.2" opacity=".35"/>
-  <circle cx="51" cy="41" r="2" fill="#f2ebe0"/>
-  <circle cx="64" cy="64" r="3.2" fill="#c2a67a"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Deskly">
+  <rect width="80" height="80" rx="16" fill="#0c0a08"/>
+  <!-- raw coworking desk + chair, side view -->
+  <g fill="none" stroke="#c2a67a" stroke-width="2.6" stroke-linecap="square" stroke-linejoin="miter">
+    <!-- desktop -->
+    <path d="M16 38h48"/>
+    <!-- desk legs -->
+    <path d="M22 38v22"/>
+    <path d="M58 38v22"/>
+    <!-- chair seat + back -->
+    <path d="M30 38v-12"/>
+    <path d="M30 26h12"/>
+  </g>
+  <!-- small work accent: laptop lid -->
+  <path d="M42 38l10-8" fill="none" stroke="#f2ebe0" stroke-width="2" stroke-linecap="square"/>
 </svg>
