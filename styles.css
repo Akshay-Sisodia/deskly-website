@@ -1,16 +1,17 @@
 :root{
-  /* Aman's bone paper with a pine accent — effectively Norm Architects' bone
-     plus the one colour Rosewood allows itself. Ink is warm-neutral so it sits
-     on bone without going cold against the pine. Still no metallic. */
+  /* Aman's palette as measured off aman.com: #f3eee7 page, #313131 headings,
+     #585858 body, #404040/#313131 buttons. Note the greys are neutral (equal
+     RGB) against warm bone — that contrast is the whole trick, and it's why
+     no accent colour is needed. */
   --paper:#f3eee7;
-  --paper-card:#faf7f2;
-  --ink:#24231f;
-  --ink-2:rgba(36,35,31,.76);
-  --ink-3:rgba(36,35,31,.5);
-  --accent:#1b3a2f;
-  --accent-soft:#2c5746;
-  --rule:rgba(36,35,31,.14);
-  --rule-strong:rgba(36,35,31,.25);
+  --paper-card:#fdf9f5;
+  --ink:#313131;
+  --ink-2:#585858;
+  --ink-3:rgba(49,49,49,.52);
+  --accent:#313131;
+  --accent-soft:#4a4a4a;
+  --rule:rgba(49,49,49,.14);
+  --rule-strong:rgba(49,49,49,.26);
 
   /* Luxury property heroes (Rosewood, Singita, Nihi, Aethos) are all large
      white type, centred, no shadow, over an atmospheric image — under a light
@@ -51,7 +52,7 @@ img{display:block;max-width:100%;height:auto}
 .display-xl{font-size:clamp(2.9rem,6.8vw,5.9rem);line-height:1.02}
 .display-l{font-size:clamp(2.25rem,5vw,3.9rem);line-height:1.08}
 .display-m{font-size:clamp(1.7rem,3vw,2.55rem);line-height:1.2}
-.display-xl em,.display-l em,.display-m em{font-style:italic;color:var(--accent)}
+.display-xl em,.display-l em,.display-m em{font-style:italic;color:var(--ink-2)}
 
 .eyebrow{font-size:.6875rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
   color:var(--ink-3);margin-bottom:1.15rem}
@@ -114,7 +115,7 @@ body.past-film .nav{color:var(--ink)}
 body.past-film .nav-links a{color:var(--ink-3)}
 body.past-film .nav-links a:hover,body.past-film .nav-links a[aria-current="true"]{color:var(--ink)}
 .nav-cta{padding:.62rem 1.15rem;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase}
-.nav-cta{background:var(--film-ink);color:#16211c;border-color:var(--film-ink)}
+.nav-cta{background:var(--film-ink);color:#262626;border-color:var(--film-ink)}
 .nav-cta img{filter:none}
 .nav-cta:hover{background:#fff;border-color:#fff}
 body.past-film .nav-cta{background:var(--accent);color:var(--paper);border-color:var(--accent)}
@@ -168,6 +169,7 @@ main{position:relative;z-index:10}
 .section:first-child{border-top:none}
 .sec-head{max-width:46rem;margin-bottom:clamp(2.5rem,6vh,4.5rem)}
 .sec-head .room-copy{margin-top:1.4rem}
+.display-l + .room-copy,.display-m + .room-copy{margin-top:1.5rem}
 
 /* lede */
 .lede-section{padding-top:clamp(5rem,12vh,8rem);background:var(--paper)}
@@ -184,11 +186,31 @@ main{position:relative;z-index:10}
 .room + .room{margin-top:clamp(4rem,10vh,7.5rem);padding-top:clamp(4rem,10vh,7.5rem);
   border-top:1px solid var(--rule)}
 .room-flip .room-img{order:2}
-.room-img{position:relative;overflow:hidden;border-radius:3px;background:var(--paper-card)}
-.room-img img{width:100%;object-fit:cover;aspect-ratio:1/1}
-.room-flip .room-img img{aspect-ratio:auto}
-.room-img::after{content:"";position:absolute;inset:0;pointer-events:none;
-  box-shadow:inset 0 0 0 1px var(--rule)}
+/* Plan drawings instead of photography — the device every premium venue uses
+   for meeting space (Four Seasons publish a capacity chart; hotels publish
+   floor plans). Honest, useful, and it shows the seat count rather than
+   asserting it. */
+/* Both drawings share one scale, as a real plan sheet does — so the Conference
+   reads as the bigger room rather than just a differently-cropped picture.
+   9.8 / 14.5 is the depth ratio between them. */
+.plan{display:block;width:auto;max-width:100%;height:auto;margin-inline:auto;
+  color:var(--ink);fill:none;stroke:currentColor;stroke-width:1;stroke-linecap:square}
+.room:not(.room-flip) .plan{max-height:21.6rem}
+.room-flip .plan{max-height:32rem}
+.plan *{vector-effect:non-scaling-stroke}
+.pl-floor{fill:rgba(49,49,49,.025);stroke:none}
+.pl-room{stroke-opacity:.5}
+.pl-glass{stroke-opacity:.32}
+.pl-label{fill:currentColor;stroke:none;font-family:var(--sans);font-size:30px;
+  font-weight:500;letter-spacing:3px;opacity:.4}
+.pl-fixture{stroke-width:3;stroke-opacity:.45}
+.pl-table{fill:rgba(49,49,49,.06);stroke-opacity:.45}
+.pl-seat rect{fill:rgba(49,49,49,.13);stroke-opacity:.3}
+.pl-swing{stroke-opacity:.3;stroke-dasharray:8 10}
+.pl-leaf{stroke-opacity:.4}
+.room-img{display:flex;flex-direction:column;align-items:center;gap:1.1rem}
+.room-img figcaption{font-size:.6875rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-3)}
 .room-body h3{margin:0 0 1.25rem}
 .room-body .btn{margin-top:2rem}
 
@@ -199,14 +221,11 @@ main{position:relative;z-index:10}
 .spec dd{font-size:1rem;color:var(--ink)}
 
 /* included */
-.included-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);
-  gap:clamp(2rem,5vw,4.5rem);align-items:center}
-.included-img{overflow:hidden;border-radius:3px;box-shadow:inset 0 0 0 1px var(--rule)}
-.ticks{list-style:none;margin-top:2.25rem;display:grid;gap:.9rem}
-.ticks li{position:relative;padding-left:1.6rem;font-size:.9375rem;color:var(--ink-2)}
-.ticks li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:8px;
-  border-left:1px solid var(--accent);border-bottom:1px solid var(--accent);
-  rotate:-45deg;translate:0 -50%}
+.ticks{list-style:none;margin-top:2.25rem;display:grid;gap:.9rem;
+  grid-template-columns:repeat(2,minmax(0,1fr));column-gap:3rem;max-width:46rem}
+.ticks li{position:relative;padding-left:1.5rem;font-size:.9375rem;color:var(--ink-2)}
+.ticks li::before{content:"";position:absolute;left:0;top:.72em;width:10px;height:1px;
+  background:var(--ink);opacity:.45}
 
 /* rates */
 .rates-table{border-top:1px solid var(--rule-strong)}
@@ -222,16 +241,10 @@ main{position:relative;z-index:10}
 .notes li{position:relative;padding-left:1.1rem;font-size:.875rem;color:var(--ink-3)}
 .notes li::before{content:"";position:absolute;left:0;top:.65em;width:4px;height:1px;background:var(--accent)}
 
-/* visit */
-.visit-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);
-  gap:clamp(2rem,5vw,4.5rem);align-items:center}
-.visit-addr{font-style:normal;font-size:1.0625rem;line-height:1.75;color:var(--ink-2);margin-top:2rem}
-.visit-links{display:flex;flex-direction:column;align-items:flex-start;gap:1.1rem;margin-top:2rem}
-.visit-links .btn{margin-bottom:.35rem}
-.visit-img{overflow:hidden;border-radius:3px}
-.visit-img img{width:100%;object-fit:cover;aspect-ratio:16/10;box-shadow:inset 0 0 0 1px var(--rule)}
-.visit-img figcaption{margin-top:.9rem;font-size:.75rem;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--ink-3)}
+/* location */
+.loc-addr{font-style:normal;font-family:var(--display);
+  font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.45;color:var(--ink);margin-top:2rem}
+.loc-links{display:flex;flex-wrap:wrap;align-items:center;gap:1.6rem;margin-top:2.5rem}
 
 /* reserve */
 .reserve-wrap{max-width:44rem}
@@ -240,7 +253,7 @@ main{position:relative;z-index:10}
 #bookForm label{display:grid;gap:.5rem}
 .lbl{display:flex;align-items:baseline;gap:.5rem;font-size:.625rem;letter-spacing:.18em;
   text-transform:uppercase;color:var(--ink-3)}
-.opt{text-transform:none;letter-spacing:.02em;color:rgba(36,35,31,.4);font-size:.6875rem}
+.opt{text-transform:none;letter-spacing:.02em;color:rgba(49,49,49,.42);font-size:.6875rem}
 #bookForm input,#bookForm select,#bookForm textarea{
   background:var(--paper-card);border:1px solid var(--rule-strong);color:var(--ink);
   border-radius:4px;padding:.9rem 1rem;font-size:1rem;font-family:var(--sans);
@@ -252,11 +265,11 @@ main{position:relative;z-index:10}
                    linear-gradient(135deg,var(--accent) 50%,transparent 50%);
   background-position:calc(100% - 1.25rem) 1.35rem,calc(100% - 1rem) 1.35rem;
   background-size:5px 5px,5px 5px;background-repeat:no-repeat}
-#bookForm input:hover,#bookForm select:hover,#bookForm textarea:hover{border-color:rgba(36,35,31,.42)}
+#bookForm input:hover,#bookForm select:hover,#bookForm textarea:hover{border-color:rgba(49,49,49,.42)}
 #bookForm input:focus,#bookForm select:focus,#bookForm textarea:focus{
   outline:none;border-color:var(--accent);background:#fff}
 #bookForm input:user-invalid{border-color:#a4442c}
-#bookForm ::placeholder{color:rgba(36,35,31,.35)}
+#bookForm ::placeholder{color:rgba(49,49,49,.38)}
 #bookForm input[type="date"],#bookForm input[type="time"]{cursor:text}
 ::-webkit-calendar-picker-indicator{cursor:pointer;opacity:.6}
 .fine{font-size:.8125rem;color:var(--ink-3);margin-top:.35rem;min-height:1.2em}
@@ -278,10 +291,11 @@ main{position:relative;z-index:10}
 
 /* ---------------- responsive ---------------- */
 @media(max-width:900px){
-  .room,.included-grid,.visit-grid{grid-template-columns:1fr;gap:2rem}
+  .room{grid-template-columns:1fr;gap:2rem}
   .room-flip .room-img{order:0}
-  .room-img img{aspect-ratio:4/3}
-  .included-grid .included-img{order:-1}
+  .room:not(.room-flip) .plan{max-height:15rem}
+  .room-flip .plan{max-height:22rem}
+  .ticks{grid-template-columns:1fr}
   .foot-grid{grid-template-columns:1fr 1fr;gap:2rem}
   .foot-contact{grid-column:1/-1}
 }

@@ -43,11 +43,23 @@ ship (measured via computed styles, not trend pieces):
 - **Type** — EB Garamond (display) + Manrope (text). Hermès's exact stack; both
   free. Old-style serifs dominate the reference set — Caslon at Norm Architects,
   Cardo at Soho House, Lyon at Aman — not didones.
-- **Palette — bone, ink, pine.** `#f3eee7` paper (Aman's bone), `#24231f` ink,
-  `#1b3a2f` accent. Effectively Norm Architects' bone plus the one colour
-  Rosewood allows itself (`#013d2d` on their buttons). Ink is warm-neutral so
-  it sits on bone without going cold against the pine. Still **no metallic** —
-  none of the references use one. Every reference page is light; none are dark.
+- **Palette — Aman's, as measured off aman.com.** `#f3eee7` page, `#313131`
+  headings, `#585858` body, `#313131`/`#404040` buttons. The greys are neutral
+  (equal RGB) against warm bone — that contrast is the whole trick, and it's
+  why no accent colour is needed. No metallic; none of the references use one.
+  Every reference page is light; none are dark.
+- **Plan drawings, not photography.** Publishing floor plans and a capacity
+  chart is what premium venues actually do for meeting space (Four Seasons have
+  a dedicated capacity-chart page; hotels publish plans per room). The two plans
+  are inline SVG generated from the same geometry as the 3D set, so the seat
+  counts on the page, in the plan and in the model all agree. Both are drawn at
+  **one shared scale** — hence the two `max-height` values in the ratio
+  9.8 / 14.5 — so the Conference reads as the larger room.
+- Plan labels only name things the copy already asserts (seats, display,
+  whiteboard, windows). **No dimensions** — the metre figures come from the 3D
+  model, not from the building, so stating them would be inventing facts.
+- `assets/img/city.jpg` is not a page image — it is the 3D window's sky plate.
+  `room-conference.jpg` is kept solely as the `og:image` / JSON-LD social card.
 - **Hero pattern, measured off the references.** Rosewood, Singita, Nihi and
   Aethos all run large white type, centred, with *no* text-shadow and no scrim,
   over an atmospheric image, under a light page. So the film stays a warm
@@ -82,6 +94,12 @@ ship (measured via computed styles, not trend pieces):
 - Honours `prefers-reduced-motion`; mobile drops shadows, bloom and dust.
 - Slate scrims are stronger on mobile: a portrait frame is filled by its
   subject, so the desktop scrim can't lift geometry behind the type.
+
+## Labels
+
+Nav reads Rooms · What's included · Rates · Location. "Included" and "Visit"
+were internal shorthand that didn't say included-in-what or visit-what; the
+anchors and class names were renamed to match so the markup doesn't lie either.
 
 ## Content still to confirm
 
