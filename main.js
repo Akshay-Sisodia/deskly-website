@@ -21,14 +21,14 @@ await load.fonts();
 
 /* ================= renderer / scene ================= */
 const renderer = new THREE.WebGLRenderer({
-  canvas, antialias: false, powerPreference: 'high-performance',
+  canvas, antialias: true, powerPreference: 'high-performance',
   stencil: false, depth: true, alpha: false,
 });
-renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 1 : 1.15));
+renderer.setPixelRatio(Math.min(devicePixelRatio, isMobile ? 2 : 1.75));
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.08;
+renderer.toneMappingExposure = 0.92;
 renderer.shadowMap.enabled = !isMobile;
 renderer.shadowMap.type = THREE.PCFShadowMap;
 renderer.shadowMap.autoUpdate = false;
@@ -102,7 +102,9 @@ function wallSign(map, w, h, x, y, z, ry = 0) {
 }
 
 /* ================= lights ================= */
-scene.add(new THREE.HemisphereLight(0x8a7a63, 0x1e130c, .45));
+/* Cool sky bounce against warm ground bounce. Without the cool side every
+   surface lands on the same hue and the rooms read flat. */
+scene.add(new THREE.HemisphereLight(0x6d7c8c, 0x241608, .5));
 const doorSpot = new THREE.SpotLight(0xffb46b, 0, 22, .65, .55, 1.2);
 doorSpot.position.set(0, 1.4, 10.2); doorSpot.target.position.set(0, 1, 16.5);
 scene.add(doorSpot, doorSpot.target);
@@ -496,7 +498,7 @@ sheerCurtain(5, 1, .28);
   pot.position.set(x, .22, -11.55); scene.add(pot);
   return pot;
 });
-lightPool(0, -10, 10, 3.4, 0xff9a50, .2);
+lightPool(0, -10, 10, 3.4, 0xff9a50, .12);
 sheerCurtain(-5, 0, .32);
 {
   // Photoreal city plate fills the window — soft haze near glass, no cartoon treeline
@@ -504,13 +506,13 @@ sheerCurtain(-5, 0, .32);
     new THREE.MeshBasicMaterial({ map: skyTex, fog: false }));
   city.position.set(0, 3.6, -26); scene.add(city);
   const haze = new THREE.Mesh(new THREE.PlaneGeometry(28, 10),
-    new THREE.MeshBasicMaterial({ map: glowTex, color: 0xe09a55, transparent: true, opacity: .22, depthWrite: false }));
+    new THREE.MeshBasicMaterial({ map: glowTex, color: 0xe09a55, transparent: true, opacity: .1, depthWrite: false }));
   haze.position.set(0, 2.4, -16); scene.add(haze);
   const sunSpr = new THREE.Sprite(new THREE.SpriteMaterial({
-    map: glowTex, color: 0xffd9a0, transparent: true, opacity: .55,
+    map: glowTex, color: 0xffd9a0, transparent: true, opacity: .28,
     blending: THREE.AdditiveBlending, depthWrite: false, fog: false,
   }));
-  sunSpr.scale.set(18, 18, 1); sunSpr.position.set(6, 6.2, -26); scene.add(sunSpr);
+  sunSpr.scale.set(11, 11, 1); sunSpr.position.set(6, 6.2, -26); scene.add(sunSpr);
 }
 
 /* ================= dust + shafts ================= */
@@ -537,9 +539,14 @@ if (HI) {
 let composer = null;
 function enableBloom() {
   if (composer || !HI) return;
-  composer = new EffectComposer(renderer);
+  // Composer bypasses the canvas's own MSAA, so the target has to multisample
+  // itself or every brass edge in the set goes back to stair-steps.
+  const size = renderer.getDrawingBufferSize(new THREE.Vector2());
+  composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(size.x, size.y, {
+    samples: 4, type: THREE.HalfFloatType,
+  }));
   composer.addPass(new RenderPass(scene, camera));
-  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .28, .4, .85));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), .18, .5, .92));
   composer.addPass(new ShaderPass({
     uniforms: { tDiffuse: { value: null }, uVig: { value: .42 } },
     vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
@@ -547,8 +554,16 @@ function enableBloom() {
       uniform sampler2D tDiffuse; uniform float uVig; varying vec2 vUv;
       void main(){
         vec4 c = texture2D(tDiffuse, vUv);
-        c.rgb += vec3(0.024, 0.008, -0.012) * (1.0 - c.rgb);
-        c.rgb *= vec3(1.02, 1.0, 0.97);
+        // The bloom pass leaves HDR values above 1.0 in the half-float target;
+        // the S-curve below goes negative on those, so clamp before grading.
+        c.rgb = clamp(c.rgb, 0.0, 1.0);
+        // Filmic split-tone: warm highlights, cool shadows. The separation is
+        // what reads as "graded" — a uniform warm push just reads as sepia.
+        float l = dot(c.rgb, vec3(0.2126, 0.7152, 0.0722));
+        c.rgb += vec3(-0.016, -0.004, 0.022) * (1.0 - smoothstep(0.0, 0.45, l));
+        c.rgb += vec3( 0.026,  0.010, -0.020) * smoothstep(0.35, 1.0, l);
+        // gentle S-curve for contrast without crushing either end
+        c.rgb = mix(c.rgb, c.rgb * c.rgb * (3.0 - 2.0 * c.rgb), 0.22);
         float d = distance(vUv, vec2(0.5, 0.46));
         c.rgb *= 1.0 - uVig * smoothstep(0.34, 0.94, d);
         gl_FragColor = c;
@@ -591,7 +606,9 @@ const SEGS = CHAPTERS.length - 1;
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 const smoothstep01 = (x) => { const t = clamp01(x); return t * t * (3 - 2 * t); };
 const chapterAt = (s) => Math.min(CHAPTERS.length - 1, Math.floor(s * SEGS + 0.001));
-const slateForProgress = (p) => (p >= 0.86 ? -1 : chapterAt(p));
+/* Slates own [0, ENDING); the booking card owns the rest. Chapter indices can't
+   double as slate indices — the last chapter is Reserve, which has no slate. */
+const ENDING = 0.9;
 const chapAt = CHAPTERS.map((_, i) => (i === CHAPTERS.length - 1 ? 1 : i / SEGS));
 
 /* Lenis = only input smoother. Camera follows with one light damp. */
@@ -654,6 +671,15 @@ function jumpToProgress(t) {
 
 /* ================= text: one slate at a time ================= */
 const slates = [...document.querySelectorAll('.moment:not(.m-book)')];
+/* Cut points, not even slices — each line lands on the beat it describes:
+   threshold crossing, table reveal, the dwell, the glass, the big room. */
+const SLATE_CUTS = [0, 0.15, 0.30, 0.44, 0.60, 0.76];
+const slateForProgress = (p) => {
+  if (p >= ENDING) return -1;
+  let i = 0;
+  while (i + 1 < SLATE_CUTS.length && p >= SLATE_CUTS[i + 1]) i++;
+  return Math.min(slates.length - 1, i);
+};
 let slateIdx = -2, slateLive = false;
 const slateBits = '.l, .fade-line, .kicker, .spec-row, .sub';
 slates.map((s) => { s.classList.remove('on'); gsap.set(s, { autoAlpha: 0, y: 0, clearProps: 'transform' }); });
@@ -840,7 +866,7 @@ function updateGlassAndScreens(u) {
 }
 
 function updateHud(p) {
-  const ending = p > 0.86;
+  const ending = p >= ENDING;
   if (ending !== lastEnding) { lastEnding = ending; document.body.classList.toggle('ending', ending); }
   if (hint) hint.style.opacity = p > .035 ? 0 : 1;
   if (Math.abs(p - lastBar) > 0.002) {
@@ -906,7 +932,7 @@ addEventListener('resize', onResize);
 visualViewport?.addEventListener('resize', onResize);
 
 /* ---- adaptive quality: Cine / Smooth / Lite ---- */
-const TIER_DPR = [1.25, 1.15, 1];
+const TIER_DPR = [2, 1.5, 1.15];
 function applyTier(t) {
   TIER = t;
   const dpr = Math.min(devicePixelRatio, TIER_DPR[t]);
